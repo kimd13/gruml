@@ -1,5 +1,7 @@
 package dependency;
 
-public interface DependencyDiagram {
+import java.io.File;
 
+public interface DependencyDiagram {
+    File create(String srcPath);
 }
