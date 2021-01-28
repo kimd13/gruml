@@ -2,7 +2,6 @@ package input.cloner;
 
 import org.eclipse.jgit.api.Git;
 import util.exception.CloneException;
-
 import java.io.File;
 
 public class SrcControlClonerImpl implements SrcControlCloner {
@@ -16,6 +15,7 @@ public class SrcControlClonerImpl implements SrcControlCloner {
                     .setDirectory(new File(dst))
                     .call();
         } catch (Exception e){
+            System.out.println(e.getMessage());
             throw new CloneException();
         }
     }

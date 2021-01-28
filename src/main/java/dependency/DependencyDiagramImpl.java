@@ -13,7 +13,7 @@ public class DependencyDiagramImpl implements DependencyDiagram {
     private UseRelationshipDependencyDiagram useRelationshipDependencyDiagram = new UseRelationshipDependencyDiagramImpl();
 
     @Override
-    public File create(String srcPath) {
-        return null;
+    public void create(String srcPath) {
+        inheritanceDependencyDiagram.populateDiagram("cloned/Bike.java");
     }
 }

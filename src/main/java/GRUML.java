@@ -1,4 +1,5 @@
 import dependency.DependencyDiagram;
+import dependency.DependencyDiagramImpl;
 import input.reader.InputReaderImpl;
 import input.cloner.SrcControlCloner;
 import input.cloner.SrcControlClonerImpl;
@@ -17,7 +18,11 @@ public class GRUML {
     public static void main(String[] args) {
         //populateInputReader(args);
         String srcUri = "https://github.com/kimd13/java-class-inheritance-dependency-example";//inputReader.getFlagValue("testing");
-        cloneInputSrc(srcUri);
+        //cloneInputSrc(srcUri);
+        DependencyDiagram dependencyDiagram = createDependencyDiagram();
+        SequenceDiagram sequenceDiagram = createSequenceDiagram();
+        dependencyDiagram.create("");
+
     }
 
     private static void populateInputReader(String [] args){
@@ -37,7 +42,7 @@ public class GRUML {
     }
 
     private static DependencyDiagram createDependencyDiagram() {
-        return null;
+        return new DependencyDiagramImpl();
     }
 
     private static SequenceDiagram createSequenceDiagram() {
