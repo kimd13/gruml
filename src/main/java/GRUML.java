@@ -1,9 +1,9 @@
-import dependency.DependencyDiagram;
-import dependency.DependencyDiagramImpl;
+import static_section.DependencyDiagram;
+import static_section.DependencyDiagramImpl;
 import input.reader.InputReaderImpl;
 import input.cloner.SrcControlCloner;
 import input.cloner.SrcControlClonerImpl;
-import sequence.SequenceDiagram;
+import dynamic_section.SequenceDiagram;
 import util.exception.CloneException;
 import util.exception.InvalidInputException;
 
@@ -21,7 +21,7 @@ public class GRUML {
         //cloneInputSrc(srcUri);
         DependencyDiagram dependencyDiagram = createDependencyDiagram();
         SequenceDiagram sequenceDiagram = createSequenceDiagram();
-        dependencyDiagram.create("");
+        dependencyDiagram.create(CLONED_SRC_DESTINATION);
 
     }
 

@@ -1,4 +1,4 @@
-package sequence;
+package dynamic_section;
 
 public interface SequenceDiagram {
 }

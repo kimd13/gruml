@@ -1,9 +1,9 @@
-package dependency.inheritance;
+package static_section.dependency.inheritance;
 
 import java.util.List;
 
-public interface InheritanceDependencyDiagram {
-    void populateDiagram(String srcPath);
+public interface InheritanceExtractor {
+    void extract(String srcPath);
     List<String> getAll();
     List<String> getChildren(String name);
     Boolean checkIfAbstract(String name);

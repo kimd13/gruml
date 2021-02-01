@@ -1,7 +1,7 @@
-package dependency.inheritance;
+package static_section.dependency.inheritance;
 
-import dependency.inheritance.model.ClassInfoContainer;
-import dependency.inheritance.model.InheritanceRelationship;
+import static_section.dependency.inheritance.model.ClassInfoContainer;
+import static_section.dependency.inheritance.model.InheritanceRelationship;
 import util.file.FileUtil;
 import util.regex.RegexUtil;
 import java.util.ArrayList;
@@ -9,23 +9,21 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class InheritanceDependencyDiagramImpl implements InheritanceDependencyDiagram {
+public class InheritanceExtractorImpl implements InheritanceExtractor {
 
     private HashMap<String, ClassInfoContainer> inheritanceMap = new HashMap<>();
     private RegexUtil regexUtil = RegexUtil.getInstance();
     private FileUtil fileUtil = FileUtil.getInstance();
 
     @Override
-    public void populateDiagram(String srcPath) {
+    public void extract(String srcPath) {
         try {
             List<String> paths = fileUtil.getAllFilePaths(srcPath);
             for (int i = 0; i < paths.size(); i++){
                 String path = paths.get(i);
                 String fileContent = fileUtil.readFile(path);
                 String filteredFileContent = removeUnnecessarySubstrings(fileContent);
-                System.out.println(filteredFileContent);
                 populateInheritanceMap(filteredFileContent);
-                System.out.println(inheritanceMap);
             }
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -52,7 +50,7 @@ public class InheritanceDependencyDiagramImpl implements InheritanceDependencyDi
         return inheritanceMap.get(name).isInterface();
     }
 
-    private void populateInheritanceMap(String target){
+    public void populateInheritanceMap(String target){
         List<String> inheritanceSubstrings = getInheritanceSubstrings(target);
         List<InheritanceRelationship> inheritanceRelationships = convertInheritanceSubstringsToRelationships(inheritanceSubstrings);
         for (InheritanceRelationship relationship: inheritanceRelationships){
@@ -79,14 +77,14 @@ public class InheritanceDependencyDiagramImpl implements InheritanceDependencyDi
         return relationships;
     }
 
-    private List<String> extractChildInfo(String inheritanceSubstring){
+    public List<String> extractChildInfo(String inheritanceSubstring){
         String [] classKeywordRemoved = inheritanceSubstring.split("class");
         String childPrecedent = extractLastWordInString(classKeywordRemoved[0]);
         String childName = extractFirstWordInString(classKeywordRemoved[1]);
         return Arrays.asList(childPrecedent, childName);
     }
 
-    private List<String> extractParents(String inheritanceSubstring, Boolean getInterfaceParents){
+    public List<String> extractParents(String inheritanceSubstring, Boolean getInterfaceParents){
         String splitKeyword =  getInterfaceParents ? "implements" : "extends";
         List<String> parents = new ArrayList<>();
         String [] split = inheritanceSubstring.split(splitKeyword);
@@ -97,12 +95,12 @@ public class InheritanceDependencyDiagramImpl implements InheritanceDependencyDi
         return parents;
     }
 
-    private String extractLastWordInString(String target){
+    public String extractLastWordInString(String target){
         String [] split = target.split(" ");
         return split[split.length - 1];
     }
 
-    private String extractFirstWordInString(String target){
+    public String extractFirstWordInString(String target){
         return target.split(" ")[1];
     }
 
@@ -111,17 +109,17 @@ public class InheritanceDependencyDiagramImpl implements InheritanceDependencyDi
          return regexUtil.getMatched(inheritanceRegex, target);
     }
 
-    private String removeSingleLineComments(String target){
+    public String removeSingleLineComments(String target){
         String singleLineCommentRegex = "//.[^\\n\\r]*";
         return regexUtil.removeMatched(singleLineCommentRegex, target);
     }
 
-    private String removeMultiLineComments(String target){
+    public String removeMultiLineComments(String target){
         String multiLineCommentRegex = "/\\*.+?\\*/";
         return regexUtil.removeMatched(multiLineCommentRegex, target);
     }
 
-    private String removeStrings(String target){
+    public String removeStrings(String target){
         String stringRegex = "\".+?\"";
         return regexUtil.removeMatched(stringRegex, target);
     }

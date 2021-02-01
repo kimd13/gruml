@@ -1,12 +1,12 @@
-package dependency.inheritance;
+package static_section.dependency.inheritance;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class InheritanceDependencyDiagramImplTest {
+public class InheritanceExtractorImplTest {
 
-    private InheritanceDependencyDiagramImpl inheritanceDependencyDiagram = new InheritanceDependencyDiagramImpl();
+    private InheritanceExtractorImpl inheritanceDependencyDiagram = new InheritanceExtractorImpl();
 
     @Test
     public void removeUnnecessarySubstrings_testRemovalOfSingleLineComments(){

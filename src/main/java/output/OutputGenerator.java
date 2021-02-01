@@ -1,7 +1,7 @@
 package output;
 
-import dependency.DependencyDiagram;
-import sequence.SequenceDiagram;
+import static_section.DependencyDiagram;
+import dynamic_section.SequenceDiagram;
 
 public interface OutputGenerator {
     void initialize(DependencyDiagram dependencyDiagram, SequenceDiagram sequenceDiagram);

@@ -1,4 +1,4 @@
-package dependency.inheritance.model;
+package static_section.dependency.inheritance.model;
 
 import java.util.ArrayList;
 import java.util.List;
