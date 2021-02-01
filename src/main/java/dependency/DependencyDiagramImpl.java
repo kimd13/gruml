@@ -5,8 +5,6 @@ import dependency.inheritance.InheritanceDependencyDiagramImpl;
 import dependency.use_relationship.UseRelationshipDependencyDiagram;
 import dependency.use_relationship.UseRelationshipDependencyDiagramImpl;
 
-import java.io.File;
-
 public class DependencyDiagramImpl implements DependencyDiagram {
 
     private InheritanceDependencyDiagram inheritanceDependencyDiagram = new InheritanceDependencyDiagramImpl();
@@ -14,6 +12,6 @@ public class DependencyDiagramImpl implements DependencyDiagram {
 
     @Override
     public void create(String srcPath) {
-        inheritanceDependencyDiagram.populateDiagram("cloned/Bike.java");
+        inheritanceDependencyDiagram.populateDiagram("cloned");
     }
 }

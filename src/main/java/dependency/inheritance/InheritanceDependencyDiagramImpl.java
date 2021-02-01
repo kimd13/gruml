@@ -1,61 +1,134 @@
 package dependency.inheritance;
 
+import dependency.inheritance.model.ClassInfoContainer;
+import dependency.inheritance.model.InheritanceRelationship;
 import util.file.FileUtil;
+import util.regex.RegexUtil;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class InheritanceDependencyDiagramImpl implements InheritanceDependencyDiagram {
 
-    private HashMap<String, List> inheritanceMap = new HashMap<>();
-    private RegexMatcher regexMatcher = new RegexMatcher();
+    private HashMap<String, ClassInfoContainer> inheritanceMap = new HashMap<>();
+    private RegexUtil regexUtil = RegexUtil.getInstance();
+    private FileUtil fileUtil = FileUtil.getInstance();
 
     @Override
     public void populateDiagram(String srcPath) {
         try {
-            String fileContent = FileUtil.getInstance().readFile(srcPath);
-
-            // Must get rid of all comments
-            // Check for extend and implements <- inheritance
-
-            //List<String> comments = regexMatcher.getCommentedSectionSubstrings(fileContent);
-            List<String> classes = regexMatcher.getClassSubstrings(fileContent);
-            List<String> interfaces = regexMatcher.getInterfaceSubstrings(fileContent);
-            System.out.println(classes);
-            System.out.println(interfaces);
+            List<String> paths = fileUtil.getAllFilePaths(srcPath);
+            for (int i = 0; i < paths.size(); i++){
+                String path = paths.get(i);
+                String fileContent = fileUtil.readFile(path);
+                String filteredFileContent = removeUnnecessarySubstrings(fileContent);
+                System.out.println(filteredFileContent);
+                populateInheritanceMap(filteredFileContent);
+                System.out.println(inheritanceMap);
+            }
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
     }
 
     @Override
-    public List getInheritanceList(String name) {
-        return null;
+    public List<String> getAll() {
+        return new ArrayList<String>(inheritanceMap.keySet());
     }
 
-    private class RegexMatcher{
-        public List<String> getCommentedSectionSubstrings(String target) {
-            return getMatchedSubstrings( "^/\\*[^]*\\*/", target);
-        }
+    @Override
+    public List<String> getChildren(String name) {
+        return inheritanceMap.get(name).getChildren();
+    }
 
-        public List<String> getClassSubstrings(String target) {
-            return getMatchedSubstrings("class [^ ]*", target);
-        }
+    @Override
+    public Boolean checkIfAbstract(String name) {
+        return inheritanceMap.get(name).isAbstract();
+    }
 
-        public List<String> getInterfaceSubstrings(String target) {
-            return getMatchedSubstrings("interface [^ ]*", target);
-        }
+    @Override
+    public Boolean checkIfInterface(String name) {
+        return inheritanceMap.get(name).isInterface();
+    }
 
-        private List<String> getMatchedSubstrings(String regex, String target){
-            List matches = new ArrayList();
-            Pattern pattern =  Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(target);
-            while (matcher.find()){
-                matches.add(matcher.group());
-            }
-            return matches;
+    private void populateInheritanceMap(String target){
+        List<String> inheritanceSubstrings = getInheritanceSubstrings(target);
+        List<InheritanceRelationship> inheritanceRelationships = convertInheritanceSubstringsToRelationships(inheritanceSubstrings);
+        for (InheritanceRelationship relationship: inheritanceRelationships){
+            inheritanceMap.computeIfAbsent(relationship.getChild(), info -> new ClassInfoContainer())
+                    .setIsAbstract(relationship.isChildAbstract());
+            inheritanceMap.computeIfAbsent(relationship.getParent(), info -> new ClassInfoContainer())
+                    .addChild(relationship.getChild())
+                    .setIsInterface(relationship.isParentInterface());
         }
+    }
+
+    public List<InheritanceRelationship> convertInheritanceSubstringsToRelationships(List<String> inheritanceSubstrings){
+        List<InheritanceRelationship> relationships = new ArrayList<>();
+        for (int i = 0; i < inheritanceSubstrings.size(); i++){
+            String inheritanceSubstring = inheritanceSubstrings.get(i);
+            List<String> childInfo = extractChildInfo(inheritanceSubstring);
+            String childPrecedent = childInfo.get(0);
+            String childName = childInfo.get(1);
+            List<String> interfaceParents = extractParents(inheritanceSubstring, true);
+            List<String> classParents = extractParents(inheritanceSubstring, false);
+            interfaceParents.forEach(parent -> { relationships.add( new InheritanceRelationship(childPrecedent, childName, "implements", parent)); });
+            classParents.forEach(parent -> { relationships.add( new InheritanceRelationship(childPrecedent, childName,"extends", parent)); });
+        }
+        return relationships;
+    }
+
+    private List<String> extractChildInfo(String inheritanceSubstring){
+        String [] classKeywordRemoved = inheritanceSubstring.split("class");
+        String childPrecedent = extractLastWordInString(classKeywordRemoved[0]);
+        String childName = extractFirstWordInString(classKeywordRemoved[1]);
+        return Arrays.asList(childPrecedent, childName);
+    }
+
+    private List<String> extractParents(String inheritanceSubstring, Boolean getInterfaceParents){
+        String splitKeyword =  getInterfaceParents ? "implements" : "extends";
+        List<String> parents = new ArrayList<>();
+        String [] split = inheritanceSubstring.split(splitKeyword);
+        for (int i = 1; i < split.length; i++){
+            String parent = extractFirstWordInString(split[i]);
+            parents.add(parent);
+        }
+        return parents;
+    }
+
+    private String extractLastWordInString(String target){
+        String [] split = target.split(" ");
+        return split[split.length - 1];
+    }
+
+    private String extractFirstWordInString(String target){
+        return target.split(" ")[1];
+    }
+
+    public List<String> getInheritanceSubstrings(String target){
+        String inheritanceRegex = "(abstract )?class(.[^\\t\\n\\r ]*)(( extends| implements) (.[^\\t\\n\\r ]*))*";
+         return regexUtil.getMatched(inheritanceRegex, target);
+    }
+
+    private String removeSingleLineComments(String target){
+        String singleLineCommentRegex = "//.[^\\n\\r]*";
+        return regexUtil.removeMatched(singleLineCommentRegex, target);
+    }
+
+    private String removeMultiLineComments(String target){
+        String multiLineCommentRegex = "/\\*.+?\\*/";
+        return regexUtil.removeMatched(multiLineCommentRegex, target);
+    }
+
+    private String removeStrings(String target){
+        String stringRegex = "\".+?\"";
+        return regexUtil.removeMatched(stringRegex, target);
+    }
+
+    public String removeUnnecessarySubstrings(String target){
+        String withoutSingleLineComments = removeSingleLineComments(target);
+        String withoutMultiLineComments = removeMultiLineComments(withoutSingleLineComments);
+        return removeStrings(withoutMultiLineComments);
     }
 }

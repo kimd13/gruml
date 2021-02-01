@@ -4,5 +4,8 @@ import java.util.List;
 
 public interface InheritanceDependencyDiagram {
     void populateDiagram(String srcPath);
-    List getInheritanceList(String name);
+    List<String> getAll();
+    List<String> getChildren(String name);
+    Boolean checkIfAbstract(String name);
+    Boolean checkIfInterface(String name);
 }

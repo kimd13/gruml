@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dependency.inheritance.InheritanceDependencyDiagramImplTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2021-01-30T02:03:19" hostname="MSI" time="0.002">
+  <properties/>
+  <testcase name="removeUnnecessarySubstrings_testRemovalOfMultiLineComments" classname="dependency.inheritance.InheritanceDependencyDiagramImplTest" time="0.001"/>
+  <testcase name="getClassSubstrings_testReturnedValuesMatch" classname="dependency.inheritance.InheritanceDependencyDiagramImplTest" time="0.0"/>
+  <testcase name="removeUnnecessarySubstrings_testRemovalOfSingleLineComments" classname="dependency.inheritance.InheritanceDependencyDiagramImplTest" time="0.0"/>
+  <testcase name="removeUnnecessarySubstrings_testRemovalOfStrings" classname="dependency.inheritance.InheritanceDependencyDiagramImplTest" time="0.0"/>
+  <testcase name="getInterfaceSubstrings_testReturnedValuesMatch" classname="dependency.inheritance.InheritanceDependencyDiagramImplTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
