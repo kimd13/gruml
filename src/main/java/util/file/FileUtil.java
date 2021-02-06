@@ -31,6 +31,11 @@ public final class FileUtil {
         return listOfPaths;
     }
 
+    public static String getLastSegmentOfPath(String path){
+        String[] directories = path.split("\\\\");
+        return directories[directories.length - 1];
+    }
+
     public synchronized static FileUtil getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new FileUtil();
