@@ -4,6 +4,7 @@ import static_section.extractor.Extractor;
 import static_section.extractor.module.model.ModuleObjectContainer;
 import static_section.extractor.module.model.ObjectMethodContainer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,6 +28,21 @@ public class ModuleExtractorImpl extends Extractor implements ModuleExtractor {
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
+    }
+
+    @Override
+    public List<String> getAllModuleNames(){
+        return new ArrayList<String>(moduleMap.keySet());
+    }
+
+    @Override
+    public List<String> getAllModuleObjects(String moduleName){
+        return moduleMap.get(moduleName).getAllObjects();
+    }
+
+    @Override
+    public List<String> getAllObjectMethods(String moduleName, String objectName){
+        return moduleMap.get(moduleName).getObject(objectName).getMethods();
     }
 
     private ModuleObjectContainer extractModuleInfoContainer(String target){
