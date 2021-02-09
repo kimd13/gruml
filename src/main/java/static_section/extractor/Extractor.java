@@ -3,6 +3,8 @@ package static_section.extractor;
 import util.file.FileUtil;
 import util.regex.RegexUtil;
 
+import java.util.List;
+
 public abstract class Extractor {
 
     protected RegexUtil regexUtil = RegexUtil.getInstance();
@@ -27,5 +29,10 @@ public abstract class Extractor {
         String withoutSingleLineComments = removeSingleLineComments(target);
         String withoutMultiLineComments = removeMultiLineComments(withoutSingleLineComments);
         return removeStrings(withoutMultiLineComments);
+    }
+
+    protected List<String> extractObjectNames(String target){
+        String objectRegex = "(?<=class |interface )(.[^\\t\\n\\r ]*)";
+        return regexUtil.getMatched(objectRegex, target);
     }
 }

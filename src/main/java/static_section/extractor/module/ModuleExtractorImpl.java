@@ -55,11 +55,6 @@ public class ModuleExtractorImpl extends Extractor implements ModuleExtractor {
         return moduleObjectContainer;
     }
 
-    private List<String> extractObjectNames(String target){
-        String objectRegex = "(?<=class |interface )(.[^\\t\\n\\r ]*)";
-        return regexUtil.getMatched(objectRegex, target);
-    }
-
     private ObjectMethodContainer extractMethods(String target){
         String unfilteredMethodRegex = "(public +|private +|static +|protected +|abstract +|native +|synchronized +)?([a-zA-Z0-9<>._?,]+) +([a-zA-Z0-9_]+) *\\([a-zA-Z0-9<>\\[\\]._?, ]*\\) *([a-zA-Z0-9_ ,]*)";
         String methodNameRegex = "([a-zA-Z0-9_]+) *(\\(.*?\\))";

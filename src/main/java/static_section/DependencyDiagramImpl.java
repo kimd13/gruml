@@ -22,8 +22,9 @@ public class DependencyDiagramImpl implements DependencyDiagram {
     }
 
     public void populateDiagrams(String srcPath){
-        inheritanceExtractor.extractAllInheritanceInfo(srcPath);
         moduleExtractor.extractAllModulesInfo(srcPath);
+        useRelationshipExtractor.extractAllUseRelationshipInfo(srcPath);
+        inheritanceExtractor.extractAllInheritanceInfo(srcPath);
     }
 
     private void createDependencyWorkbook(){
