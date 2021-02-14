@@ -1,32 +1,23 @@
 package static_section.extractor.dependency.inheritance;
 
-import static_section.extractor.Extractor;
-import static_section.extractor.dependency.inheritance.model.ClassInfoContainer;
-import static_section.extractor.dependency.inheritance.model.InheritanceRelationship;
+import static_section.extractor.struct.ClassInfoContainer;
+import static_section.extractor.struct.InheritanceRelationship;
+import util.regex.RegexUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class InheritanceExtractorImpl extends Extractor implements InheritanceExtractor {
+public class InheritanceExtractorImpl implements InheritanceExtractor {
 
-    private HashMap<String, ClassInfoContainer> inheritanceMap = new HashMap<>();
+    private final RegexUtil regexUtil = RegexUtil.getInstance();
+    private final HashMap<String, ClassInfoContainer> inheritanceMap = new HashMap<>();
 
     @Override
-    public void extractAllInheritanceInfo(String srcPath) {
-        try {
-            List<String> paths = fileUtil.getAllFilePaths(srcPath);
-            for (String path : paths) {
-                String moduleName = fileUtil.getLastSegmentOfPath(path);
-                if (moduleName.endsWith(".java")) {
-                    String fileContent = fileUtil.readFile(path);
-                    String filteredFileContent = removeUnnecessarySubstrings(fileContent);
-                    populateInheritanceMap(filteredFileContent);
-                }
-            }
-            System.out.println(inheritanceMap);
-        } catch (Exception e){
-            System.out.println(e.getMessage());
+    public void extractAllInheritanceInfo(List<String> objectsAsStrings) {
+        for (String object: objectsAsStrings){
+            populateInheritanceMap(object);
         }
     }
 
@@ -64,15 +55,18 @@ public class InheritanceExtractorImpl extends Extractor implements InheritanceEx
 
     public List<InheritanceRelationship> convertInheritanceSubstringsToRelationships(List<String> inheritanceSubstrings){
         List<InheritanceRelationship> relationships = new ArrayList<>();
-        for (int i = 0; i < inheritanceSubstrings.size(); i++){
-            String inheritanceSubstring = inheritanceSubstrings.get(i);
+        for (String inheritanceSubstring : inheritanceSubstrings) {
             List<String> childInfo = extractChildInfo(inheritanceSubstring);
             String childPrecedent = childInfo.get(0);
             String childName = childInfo.get(1);
             List<String> interfaceParents = extractParents(inheritanceSubstring, true);
             List<String> classParents = extractParents(inheritanceSubstring, false);
-            interfaceParents.forEach(parent -> { relationships.add( new InheritanceRelationship(childPrecedent, childName, "implements", parent)); });
-            classParents.forEach(parent -> { relationships.add( new InheritanceRelationship(childPrecedent, childName,"extends", parent)); });
+            interfaceParents.forEach(parent -> {
+                relationships.add(new InheritanceRelationship(childPrecedent, childName, "implements", parent));
+            });
+            classParents.forEach(parent -> {
+                relationships.add(new InheritanceRelationship(childPrecedent, childName, "extends", parent));
+            });
         }
         return relationships;
     }

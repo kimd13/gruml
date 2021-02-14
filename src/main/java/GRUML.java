@@ -1,5 +1,5 @@
-import static_section.DependencyDiagram;
-import static_section.DependencyDiagramImpl;
+import static_section.diagram.DependencyDiagram;
+import static_section.diagram.DependencyDiagramImpl;
 import input.reader.InputReaderImpl;
 import input.cloner.SrcControlCloner;
 import input.cloner.SrcControlClonerImpl;

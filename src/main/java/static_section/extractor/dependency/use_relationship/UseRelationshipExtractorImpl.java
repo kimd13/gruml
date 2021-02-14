@@ -1,36 +1,21 @@
 package static_section.extractor.dependency.use_relationship;
 
-import static_section.extractor.Extractor;
+import util.regex.RegexUtil;
 
 import java.util.*;
 
-public class UseRelationshipExtractorImpl extends Extractor implements UseRelationshipExtractor {
+public class UseRelationshipExtractorImpl implements UseRelationshipExtractor {
 
-    private HashMap<String, List<String>> useRelationshipMap = new HashMap<>();
+    private final RegexUtil regexUtil = RegexUtil.getInstance();
+    private final HashMap<String, List<String>> useRelationshipMap = new HashMap<>();
 
     @Override
-    public void extractAllUseRelationshipInfo(String srcPath) {
-        try {
-            List<String> paths = fileUtil.getAllFilePaths(srcPath);
-            for (String path : paths) {
-                String moduleName = fileUtil.getLastSegmentOfPath(path);
-                if (moduleName.endsWith(".java")) {
-                    String fileContent = fileUtil.readFile(path);
-                    String filteredFileContent = removeUnnecessarySubstrings(fileContent);
-                    populateUseRelationshipMapKeys(filteredFileContent);
-                }
-            }
-            for (String path : paths) {
-                String moduleName = fileUtil.getLastSegmentOfPath(path);
-                if (moduleName.endsWith(".java")) {
-                    String fileContent = fileUtil.readFile(path);
-                    String filteredFileContent = removeUnnecessarySubstrings(fileContent);
-                    populateUseRelationshipMapValues(filteredFileContent);
-                }
-            }
-            System.out.println(useRelationshipMap);
-        } catch (Exception e){
-            System.out.println(e.getMessage());
+    public void extractAllUseRelationshipInfo(List<String> objectsAsStrings) {
+        for (String object: objectsAsStrings){
+            populateUseRelationshipMapKeys(object);
+        }
+        for (String object: objectsAsStrings){
+            populateUseRelationshipMapValues(object);
         }
     }
 
@@ -55,5 +40,10 @@ public class UseRelationshipExtractorImpl extends Extractor implements UseRelati
         }
         String useRelationshipRegex = useRelationshipRegexBuilder.toString();
         return "(" + useRelationshipRegex.substring(0, useRelationshipRegex.length() - 1) + ")";
+    }
+
+    private List<String> extractObjectNames(String target){
+        String objectRegex = "(?<=class |interface )(.[^\\t\\n\\r ]*)";
+        return regexUtil.getMatched(objectRegex, target);
     }
 }
