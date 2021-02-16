@@ -3,9 +3,7 @@ package static_section.extractor.dependency.inheritance;
 import static_section.extractor.struct.ClassInfoContainer;
 import static_section.extractor.struct.InheritanceRelationship;
 import util.regex.RegexUtil;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,8 +30,13 @@ public class InheritanceExtractorImpl implements InheritanceExtractor {
     }
 
     @Override
-    public Boolean checkIfAbstract(String name) {
-        return inheritanceMap.get(name).isAbstract();
+    public boolean isObjectInheritedFrom(String name) {
+        ClassInfoContainer classInfoContainer = inheritanceMap.get(name);
+        if (classInfoContainer == null){
+            return false;
+        } else {
+            return classInfoContainer.isParent();
+        }
     }
 
     @Override
@@ -45,10 +48,9 @@ public class InheritanceExtractorImpl implements InheritanceExtractor {
         List<String> inheritanceSubstrings = getInheritanceSubstrings(target);
         List<InheritanceRelationship> inheritanceRelationships = convertInheritanceSubstringsToRelationships(inheritanceSubstrings);
         for (InheritanceRelationship relationship: inheritanceRelationships){
-            inheritanceMap.computeIfAbsent(relationship.getChild(), info -> new ClassInfoContainer())
-                    .setIsAbstract(relationship.isChildAbstract());
             inheritanceMap.computeIfAbsent(relationship.getParent(), info -> new ClassInfoContainer())
                     .addChild(relationship.getChild())
+                    .setIsParent(true)
                     .setIsInterface(relationship.isParentInterface());
         }
     }
@@ -56,26 +58,22 @@ public class InheritanceExtractorImpl implements InheritanceExtractor {
     public List<InheritanceRelationship> convertInheritanceSubstringsToRelationships(List<String> inheritanceSubstrings){
         List<InheritanceRelationship> relationships = new ArrayList<>();
         for (String inheritanceSubstring : inheritanceSubstrings) {
-            List<String> childInfo = extractChildInfo(inheritanceSubstring);
-            String childPrecedent = childInfo.get(0);
-            String childName = childInfo.get(1);
+            String childName = extractChildName(inheritanceSubstring);
             List<String> interfaceParents = extractParents(inheritanceSubstring, true);
             List<String> classParents = extractParents(inheritanceSubstring, false);
             interfaceParents.forEach(parent -> {
-                relationships.add(new InheritanceRelationship(childPrecedent, childName, "implements", parent));
+                relationships.add(new InheritanceRelationship(childName, "implements", parent));
             });
             classParents.forEach(parent -> {
-                relationships.add(new InheritanceRelationship(childPrecedent, childName, "extends", parent));
+                relationships.add(new InheritanceRelationship(childName, "extends", parent));
             });
         }
         return relationships;
     }
 
-    public List<String> extractChildInfo(String inheritanceSubstring){
+    public String extractChildName(String inheritanceSubstring){
         String [] classKeywordRemoved = inheritanceSubstring.split("class");
-        String childPrecedent = extractLastWordInString(classKeywordRemoved[0]);
-        String childName = extractFirstWordInString(classKeywordRemoved[1]);
-        return Arrays.asList(childPrecedent, childName);
+        return extractFirstWordInString(classKeywordRemoved[1]);
     }
 
     public List<String> extractParents(String inheritanceSubstring, Boolean getInterfaceParents){
@@ -87,11 +85,6 @@ public class InheritanceExtractorImpl implements InheritanceExtractor {
             parents.add(parent);
         }
         return parents;
-    }
-
-    public String extractLastWordInString(String target){
-        String [] split = target.split(" ");
-        return split[split.length - 1];
     }
 
     public String extractFirstWordInString(String target){

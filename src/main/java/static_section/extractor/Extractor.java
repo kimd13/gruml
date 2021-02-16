@@ -6,4 +6,6 @@ public interface Extractor {
     void extractAllInfo(String srcPath);
     List<String> getAllObjects();
     List<String> getAllObjectMethods(String objectName);
+    boolean isObjectInheritedFrom(String objectName);
+    boolean isObjectUsedByAnother(String objectName);
 }

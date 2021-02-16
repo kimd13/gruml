@@ -21,8 +21,8 @@ public class ExtractorImpl implements Extractor{
     private final UseRelationshipExtractor useRelationshipExtractor = new UseRelationshipExtractorImpl();
     private final ObjectInfoExtractor objectInfoExtractor = new ObjectInfoExtractorImpl();
 
-    protected RegexUtil regexUtil = RegexUtil.getInstance();
-    protected FileUtil fileUtil = FileUtil.getInstance();
+    private final RegexUtil regexUtil = RegexUtil.getInstance();
+    private final FileUtil fileUtil = FileUtil.getInstance();
 
     @Override
     public void extractAllInfo(String srcPath) {
@@ -40,6 +40,16 @@ public class ExtractorImpl implements Extractor{
     @Override
     public List<String> getAllObjectMethods(String objectName) {
         return objectInfoExtractor.getAllObjectMethods(objectName);
+    }
+
+    @Override
+    public boolean isObjectInheritedFrom(String objectName) {
+        return inheritanceExtractor.isObjectInheritedFrom(objectName);
+    }
+
+    @Override
+    public boolean isObjectUsedByAnother(String objectName) {
+        return false;
     }
 
     private void getAllObjectsAsStrings(String srcPath){

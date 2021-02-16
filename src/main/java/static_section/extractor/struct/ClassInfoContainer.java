@@ -4,33 +4,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClassInfoContainer {
+
     private Boolean isInterface = false;
-    private Boolean isAbstract = false;
+    private boolean isParent = false;
     private final List<String> children = new ArrayList<>();
 
     @Override
     public String toString() {
-        return String.format("(isInterface: %s, isAbstract: %s, children: %s)", isInterface, isAbstract, children);
+        return String.format("(isInterface: %s, isParent: %s, children: %s)", isInterface, isParent, children);
     }
 
     public Boolean isInterface() {
         return isInterface;
     }
 
-    public Boolean isAbstract() {
-        return isAbstract;
+
+    public boolean isParent(){
+        return isParent;
     }
 
     public List<String> getChildren() {
         return children;
     }
 
-    public void setIsInterface(Boolean isInterface) {
-        this.isInterface = isInterface;
+    public ClassInfoContainer setIsParent(boolean isParent){
+        this.isParent = isParent;
+        return this;
     }
 
-    public void setIsAbstract(Boolean isAbstract) {
-        this.isAbstract = isAbstract;
+    public ClassInfoContainer setIsInterface(Boolean isInterface) {
+        this.isInterface = isInterface;
+        return this;
     }
 
     public ClassInfoContainer addChild(String child){

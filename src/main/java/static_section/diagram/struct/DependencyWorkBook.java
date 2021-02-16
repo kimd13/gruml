@@ -1,13 +1,17 @@
 package static_section.diagram.struct;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class DependencyWorkBook {
 
@@ -33,10 +37,55 @@ public class DependencyWorkBook {
         workbook.close();
     }
 
-    public void addRow(ModuleRow moduleRow){
+    public void addRow(DependencyRow dependencyRow){
         Row row = spreadsheet.createRow(rowIndex);
-        Cell cell = row.createCell(moduleRow.getColumnIndex());
-        cell.setCellValue(moduleRow.getValue());
+        List<String> values = dependencyRow.getRow();
+        for (int index = 0; index < values.size(); index++){
+            Cell cell = createCell(row, values.get(index), index);
+            if (isIndexOfDependenceIcons(index)){
+                cell.setCellStyle(getRedColoredCellStyle());
+            } else if (isIndexOfNameAndIsObject(index, dependencyRow)){
+                cell.setCellStyle(getBoldedCellStyle());
+            }
+        }
         rowIndex++;
+    }
+
+    private boolean isIndexOfNameAndIsObject(int index, DependencyRow dependencyRow){
+        return index == DependencyRow.NAME_INDEX && dependencyRow.isObject();
+    }
+
+    private boolean isIndexOfDependenceIcons(int index){
+        return index == DependencyRow.IS_INHERITED_FROM_INDEX || index == DependencyRow.IS_USED_BY_ANOTHER_OBJECT_INDEX;
+    }
+
+    private Cell createCell(Row row, String value, int column){
+        Cell cell = row.createCell(column);
+        cell.setCellValue(value);
+        return cell;
+    }
+
+    private CellStyle getBoldedCellStyle(){
+        CellStyle style = workbook.createCellStyle();
+        style.setFont(getBoldFont());
+        return style;
+    }
+
+    private CellStyle getRedColoredCellStyle(){
+        CellStyle style = workbook.createCellStyle();
+        style.setFont(getRedColoredFont());
+        return style;
+    }
+
+    private Font getBoldFont(){
+        XSSFFont font= workbook.createFont();
+        font.setBold(true);
+        return font;
+    }
+
+    private Font getRedColoredFont(){
+        XSSFFont font= workbook.createFont();
+        font.setColor(XSSFFont.COLOR_RED);
+        return font;
     }
 }

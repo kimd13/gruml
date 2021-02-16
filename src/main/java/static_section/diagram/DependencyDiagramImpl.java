@@ -1,7 +1,7 @@
 package static_section.diagram;
 
 import static_section.diagram.struct.DependencyWorkBook;
-import static_section.diagram.struct.ModuleRow;
+import static_section.diagram.struct.DependencyRow;
 import static_section.extractor.Extractor;
 import static_section.extractor.ExtractorImpl;
 
@@ -20,10 +20,12 @@ public class DependencyDiagramImpl implements DependencyDiagram {
         dependencyWorkBook.createWorkBook("testing");
         dependencyWorkBook.createSpreadsheet("dependency");
         for (String objectName : extractor.getAllObjects()) {
-            ModuleRow object = new ModuleRow(ModuleRow.ModuleRowType.OBJECT, objectName);
+            DependencyRow object = new DependencyRow(DependencyRow.ModuleRowType.OBJECT, objectName,
+                    extractor.isObjectInheritedFrom(objectName), extractor.isObjectUsedByAnother(objectName));
             dependencyWorkBook.addRow(object);
             for (String methodName : extractor.getAllObjectMethods(objectName)) {
-                ModuleRow method = new ModuleRow(ModuleRow.ModuleRowType.METHOD, methodName);
+                DependencyRow method = new DependencyRow(DependencyRow.ModuleRowType.METHOD, methodName,
+                        false, false);
                 dependencyWorkBook.addRow(method);
             }
         }
