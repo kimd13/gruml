@@ -32,21 +32,45 @@ public class ObjectInfoExtractorImpl implements ObjectInfoExtractor{
     }
 
     private List<String> extractMethods(String objectName, String target, boolean withParams){
-        String completeMethodRegex = "(public +|private +|static +|protected +|abstract +|native +|synchronized +)?([a-zA-Z0-9<>._?,]+) +([a-zA-Z0-9_]+) *\\([a-zA-Z0-9<>\\[\\]._?, ]*\\) *([a-zA-Z0-9_ ,]*) *(\\{)";
-        String methodNameRegex = "([a-zA-Z0-9_]+) *(\\(.*?\\))";
-        List<String> methods = new ArrayList<>();
-        List<String> completeMethods = regexUtil.getMatched(completeMethodRegex, target);
-        for (String completeMethod: completeMethods){
-            String method = (regexUtil.getMatched(methodNameRegex, completeMethod)).get(0);
-            if (!isConstructor(objectName, method)){
-                if (withParams) {
-                    methods.add(method);
-                } else {
-                    methods.add(removeParams(method) + "()");
-                }
+        List<String> filteredMethods = new ArrayList<>();
+        List<String> declaredMethods = findDeclaredMethods(target);
+
+        for (String declaredMethod: declaredMethods){
+            String methodNameAndParams = extractMethodNameAndParams(declaredMethod);
+            if (!isConstructor(objectName, methodNameAndParams)){
+                filteredMethods.add(getMethodWithOrWithoutParams(withParams, methodNameAndParams));
             }
         }
-        return methods;
+
+        return filteredMethods;
+    }
+
+    private String getMethodWithOrWithoutParams(boolean withParams, String method){
+        if (!withParams) {
+            return removeParams(method) + "()";
+        }
+        return method;
+    }
+
+    private String extractMethodNameAndParams(String method){
+        String methodNameAndParamsRegex = "([a-zA-Z0-9_]+) *(\\(.*?\\))";
+        return regexUtil.getMatched(methodNameAndParamsRegex, method).get(0);
+    }
+
+    private List<String> findDeclaredMethods(String target){
+        // This regex finds all methods whether or not they are declared or called
+        String allMethodRegex = "([a-zA-Z0-9<>_?]+) +([a-zA-Z0-9_]+) *\\(.*?\\) *(\\{|\\;)";
+        return removeCalledMethods(regexUtil.getMatched(allMethodRegex, target));
+    }
+
+    private List<String> removeCalledMethods(List<String> methods){
+        List<String> declaredMethods = new ArrayList<>();
+        for (String method: methods){
+            if (!method.contains("return ") && !method.contains("new ")){
+                declaredMethods.add(method);
+            }
+        }
+        return declaredMethods;
     }
 
     private boolean isConstructor(String objectName, String method){

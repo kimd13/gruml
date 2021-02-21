@@ -4,4 +4,5 @@ import java.util.List;
 
 public interface UseRelationshipExtractor {
     void extractAllUseRelationshipInfo(List<String> objectsAsStrings);
+    boolean isObjectUsedByAnother(String objectName);
 }

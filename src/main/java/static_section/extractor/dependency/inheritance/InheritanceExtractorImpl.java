@@ -25,13 +25,13 @@ public class InheritanceExtractorImpl implements InheritanceExtractor {
     }
 
     @Override
-    public List<String> getChildren(String name) {
-        return inheritanceMap.get(name).getChildren();
+    public List<String> getChildren(String objectName) {
+        return inheritanceMap.get(objectName).getChildren();
     }
 
     @Override
-    public boolean isObjectInheritedFrom(String name) {
-        ClassInfoContainer classInfoContainer = inheritanceMap.get(name);
+    public boolean isObjectInheritedFrom(String objectName) {
+        ClassInfoContainer classInfoContainer = inheritanceMap.get(objectName);
         if (classInfoContainer == null){
             return false;
         } else {
@@ -40,8 +40,8 @@ public class InheritanceExtractorImpl implements InheritanceExtractor {
     }
 
     @Override
-    public Boolean checkIfInterface(String name) {
-        return inheritanceMap.get(name).isInterface();
+    public Boolean checkIfInterface(String objectName) {
+        return inheritanceMap.get(objectName).isInterface();
     }
 
     public void populateInheritanceMap(String target){

@@ -16,17 +16,16 @@ import java.util.List;
 
 public class ExtractorImpl implements Extractor{
 
-    private final List<String> objectsAsStrings = new ArrayList<>();
     private final InheritanceExtractor inheritanceExtractor = new InheritanceExtractorImpl();
-    private final UseRelationshipExtractor useRelationshipExtractor = new UseRelationshipExtractorImpl();
     private final ObjectInfoExtractor objectInfoExtractor = new ObjectInfoExtractorImpl();
+    private final UseRelationshipExtractor useRelationshipExtractor = new UseRelationshipExtractorImpl(objectInfoExtractor);
 
     private final RegexUtil regexUtil = RegexUtil.getInstance();
     private final FileUtil fileUtil = FileUtil.getInstance();
 
     @Override
     public void extractAllInfo(String srcPath) {
-        getAllObjectsAsStrings(srcPath);
+        List<String> objectsAsStrings = getAllObjectsAsStrings(srcPath);
         objectInfoExtractor.extractAllObjectInfo(objectsAsStrings);
         inheritanceExtractor.extractAllInheritanceInfo(objectsAsStrings);
         useRelationshipExtractor.extractAllUseRelationshipInfo(objectsAsStrings);
@@ -49,10 +48,11 @@ public class ExtractorImpl implements Extractor{
 
     @Override
     public boolean isObjectUsedByAnother(String objectName) {
-        return false;
+        return useRelationshipExtractor.isObjectUsedByAnother(objectName);
     }
 
-    private void getAllObjectsAsStrings(String srcPath){
+    private List<String> getAllObjectsAsStrings(String srcPath){
+        List<String> objectsAsStrings = new ArrayList<>();
         try {
             List<String> paths = fileUtil.getAllFilePaths(srcPath);
             for (String path : paths) {
@@ -66,6 +66,7 @@ public class ExtractorImpl implements Extractor{
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
+        return objectsAsStrings;
     }
 
     private Boolean isJavaFile(String fileName){
