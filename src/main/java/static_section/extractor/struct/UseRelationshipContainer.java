@@ -6,8 +6,8 @@ import java.util.Set;
 
 public class UseRelationshipContainer {
 
-    private Set<String> used = new HashSet<>();
-    private Set<String> usedBy = new HashSet<>();
+    private final Set<String> used = new HashSet<>();
+    private final Set<String> usedBy = new HashSet<>();
 
     @Override
     public String toString() {

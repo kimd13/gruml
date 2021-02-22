@@ -39,7 +39,8 @@ public class DependencyRow {
 
     private String isUsedByAnotherObjectAsString(){
         if (isUsedByAnotherObject){
-            return String.valueOf('\u21D2');
+            return String.valueOf('\u279D');
+            //return String.valueOf('\u21D2');
         }
         return "";
     }

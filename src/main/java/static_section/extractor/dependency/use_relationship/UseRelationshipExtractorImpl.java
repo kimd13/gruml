@@ -37,46 +37,56 @@ public class UseRelationshipExtractorImpl implements UseRelationshipExtractor {
     }
 
     private void populateUseRelationshipMapValues(String target){
-        String useRelationshipRegex = formulateUseRelationshipRegex();
+
         String objectName = extractObjectName(target).get(0);
-        List<String> useRelationships = regexUtil.getMatched(useRelationshipRegex, target);
-        List<String> cleanedUseRelationships = cleanedUseRelationships(objectName, useRelationships);
-        useRelationshipMap.get(objectName).addAllToUsed(cleanedUseRelationships);
+        List<String> objectsFoundInTarget = getObjectsFoundInTarget(removeClassDeclaration(target));
+        List<String> cleanedObjectsFoundInTarget = new ArrayList<>();
+
+        for (String objectFoundInTarget: objectsFoundInTarget){
+            String cleanedObjectFoundInTarget = strippedFrom(objectFoundInTarget, Arrays.asList(" ", "\\(", "\\{", "\\<", "\\>"));
+            if (isNotSelf(objectName, cleanedObjectFoundInTarget)){
+                useRelationshipMap.get(cleanedObjectFoundInTarget).addToUsedBy(objectName);
+                cleanedObjectsFoundInTarget.add(cleanedObjectFoundInTarget);
+            }
+        }
+
+        useRelationshipMap.get(objectName).addAllToUsed(removedDuplicates(cleanedObjectsFoundInTarget));
     }
 
-    private List<String> cleanedUseRelationships(String objectName, List<String> useRelationships){
-        List<String> strippedFromSpacesAndSelf = strippedFromSpecialCharsAndSelf(objectName, useRelationships);
-        return removedDuplicates(strippedFromSpacesAndSelf);
+    private String removeClassDeclaration(String target){
+        // Must remove class declaration to rid of inheritance dependencies
+        return target.replaceFirst("(.*)(\\{)", "");
+    }
+
+    private List<String> getObjectsFoundInTarget(String target){
+        String objectsInProjectRegex = getObjectsInProjectRegex();
+        return regexUtil.getMatched(objectsInProjectRegex, target);
+    }
+
+    private boolean isNotSelf(String me, String other){
+        return !me.equals(other);
+    }
+
+    private String strippedFrom(String target, List<String> words){
+        return target.replaceAll(getOrRegex(words), "");
     }
 
     private List<String> removedDuplicates(List<String> useRelationships){
         return new ArrayList<>(new HashSet<>(useRelationships));
     }
 
-    private List<String> strippedFromSpecialCharsAndSelf(String objectName, List<String> useRelationships){
-        List<String> stripped = new ArrayList<>();
-        for (String useRelationship: useRelationships){
-            String specialCharsRemoved = useRelationship
-                    .replace(" ", "")
-                    .replace("(", "")
-                    .replace("{", "")
-                    .replace("<", "")
-                    .replace(">", "");
-            if (!specialCharsRemoved.equals(objectName)){
-                useRelationshipMap.get(specialCharsRemoved).addToUsedBy(objectName);
-                stripped.add(specialCharsRemoved);
-            }
-        }
-        return stripped;
+    private String getObjectsInProjectRegex(){
+        String orRegex = getOrRegex(useRelationshipMap.keySet());
+        return "( |\\(|\\<)" + orRegex + "( |\\(|\\>| *\\{)";
     }
 
-    private String formulateUseRelationshipRegex(){
-        StringBuilder useRelationshipRegexBuilder = new StringBuilder();
-        for (String object: useRelationshipMap.keySet()){
-            useRelationshipRegexBuilder.append(object).append("|");
+    private String getOrRegex(Iterable<String> words){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String word: words){
+            stringBuilder.append(word).append("|");
         }
-        String useRelationshipRegex = useRelationshipRegexBuilder.toString();
-        return "( |\\(|\\<)(" + useRelationshipRegex.substring(0, useRelationshipRegex.length() - 1) + ")( |\\(|\\>| *\\{)";
+        String string = stringBuilder.toString();
+        return "(" + string.substring(0, string.length() - 1) + ")";
     }
 
     private List<String> extractObjectName(String target){
