@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class DependencyWorkBook {
 
@@ -20,6 +21,7 @@ public class DependencyWorkBook {
     private XSSFWorkbook workbook = null;
     private XSSFSheet spreadsheet = null;
     private int rowIndex = 0;
+    private int columnIndex = 0;
 
     public void createWorkBook(String workbookName){
         this.workbookName = workbookName;
@@ -32,9 +34,17 @@ public class DependencyWorkBook {
     }
 
     public void closeWorkBook() throws IOException {
-        FileOutputStream out = new FileOutputStream(new File(workbookName + ".xlsx"));
+        FileOutputStream out = new FileOutputStream(workbookName + ".xlsx");
         workbook.write(out);
         workbook.close();
+    }
+
+    public void addColumn(DependencyChannel dependencyChannel){
+        IntStream.range(0, dependencyChannel.getLen()).forEachOrdered(rowIndex -> {
+            Row row = spreadsheet.createRow(rowIndex);
+            createCell(row, "gere", columnIndex);
+        });
+        columnIndex++;
     }
 
     public void addRow(DependencyRow dependencyRow){

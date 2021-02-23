@@ -8,4 +8,6 @@ public interface Extractor {
     List<String> getAllObjectMethods(String objectName);
     boolean isObjectInheritedFrom(String objectName);
     boolean isObjectUsedByAnother(String objectName);
+    int getNumberOfMethods();
+    int getNumberOfObjects();
 }

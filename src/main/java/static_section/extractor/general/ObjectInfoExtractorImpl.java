@@ -11,6 +11,7 @@ public class ObjectInfoExtractorImpl implements ObjectInfoExtractor{
     private final RegexUtil regexUtil = RegexUtil.getInstance();
     // key is object name, value is methods
     private final HashMap<String, List<String>> objectMap = new HashMap<>();
+    private int numberOfMethods = 0;
 
     @Override
     public void extractAllObjectInfo(List<String> objectsAsStrings) {
@@ -31,6 +32,16 @@ public class ObjectInfoExtractorImpl implements ObjectInfoExtractor{
         return objectMap.get(objectName);
     }
 
+    @Override
+    public int getNumberOfMethods() {
+        return numberOfMethods;
+    }
+
+    @Override
+    public int getNumberOfObjects() {
+        return objectMap.size();
+    }
+
     private List<String> extractMethods(String objectName, String target, boolean withParams){
         List<String> filteredMethods = new ArrayList<>();
         List<String> declaredMethods = findDeclaredMethods(target);
@@ -38,6 +49,7 @@ public class ObjectInfoExtractorImpl implements ObjectInfoExtractor{
         for (String declaredMethod: declaredMethods){
             String methodNameAndParams = extractMethodNameAndParams(declaredMethod);
             if (!isConstructor(objectName, methodNameAndParams)){
+                numberOfMethods++;
                 filteredMethods.add(getMethodWithOrWithoutParams(withParams, methodNameAndParams));
             }
         }

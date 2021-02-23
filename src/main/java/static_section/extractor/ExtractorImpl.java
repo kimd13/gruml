@@ -51,6 +51,16 @@ public class ExtractorImpl implements Extractor{
         return useRelationshipExtractor.isObjectUsedByAnother(objectName);
     }
 
+    @Override
+    public int getNumberOfMethods() {
+        return objectInfoExtractor.getNumberOfMethods();
+    }
+
+    @Override
+    public int getNumberOfObjects() {
+        return objectInfoExtractor.getNumberOfObjects();
+    }
+
     private List<String> getAllObjectsAsStrings(String srcPath){
         List<String> objectsAsStrings = new ArrayList<>();
         try {
