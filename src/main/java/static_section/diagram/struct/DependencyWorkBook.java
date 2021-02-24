@@ -1,16 +1,16 @@
 package static_section.diagram.struct;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import javax.rmi.ssl.SslRMIClientSocketFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -39,24 +39,35 @@ public class DependencyWorkBook {
         workbook.close();
     }
 
-    public void addColumn(DependencyChannel dependencyChannel){
-        IntStream.range(0, dependencyChannel.getLen()).forEachOrdered(rowIndex -> {
-            Row row = spreadsheet.createRow(rowIndex);
-            createCell(row, "gere", columnIndex);
+    public void setDependencyChannels(int numberOfChannels, int lenOfChannels){
+        IntStream.range(0, lenOfChannels).forEachOrdered( dpRowIndex -> {
+            Row row = spreadsheet.createRow(dpRowIndex);
+            IntStream.range(0, numberOfChannels).forEachOrdered( dpColumnIndex -> {
+                Cell cell = createCell(row, "", dpColumnIndex);
+                cell.setCellStyle(getLeftBorderOutlinedStyle());
+            });
         });
-        columnIndex++;
+        columnIndex += numberOfChannels;
+    }
+
+    private CellStyle getLeftBorderOutlinedStyle(){
+        CellStyle style = workbook.createCellStyle();
+        style.setBorderLeft(BorderStyle.MEDIUM);
+        return style;
     }
 
     public void addRow(DependencyRow dependencyRow){
-        Row row = spreadsheet.createRow(rowIndex);
+        Row row = spreadsheet.getRow(rowIndex);
         List<String> values = dependencyRow.getRow();
+        int startColumn = columnIndex;
         for (int index = 0; index < values.size(); index++){
-            Cell cell = createCell(row, values.get(index), index);
+            Cell cell = createCell(row, values.get(index), startColumn);
             if (isIndexOfDependenceIcons(index)){
                 cell.setCellStyle(getRedColoredCellStyle());
             } else if (isIndexOfNameAndIsObject(index, dependencyRow)){
                 cell.setCellStyle(getBoldedCellStyle());
             }
+            startColumn++;
         }
         rowIndex++;
     }

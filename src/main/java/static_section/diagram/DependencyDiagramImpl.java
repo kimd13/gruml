@@ -8,6 +8,8 @@ import static_section.diagram.struct.DependencyRow;
 import static_section.extractor.Extractor;
 import static_section.extractor.ExtractorImpl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -28,10 +30,7 @@ public class DependencyDiagramImpl implements DependencyDiagram {
         int sumOfMethodsAndObjects = extractor.getNumberOfObjects() + extractor.getNumberOfMethods();
         List<String> allObjects = extractor.getAllObjects();
 
-        //for (String object: allObjects) {
-            //DependencyChannel dependencyChannel = new DependencyChannel(sumOfMethodsAndObjects, 0);
-         //   dependencyWorkBook.addColumn(dependencyChannel);
-       // }
+        dependencyWorkBook.setDependencyChannels(extractor.getNumberOfObjects(), sumOfMethodsAndObjects);
 
         for (String objectName : allObjects) {
             DependencyRow object = new DependencyRow(DependencyRow.ModuleRowType.OBJECT, objectName,
@@ -43,6 +42,7 @@ public class DependencyDiagramImpl implements DependencyDiagram {
                 dependencyWorkBook.addRow(method);
             }
         }
+
         try {
             dependencyWorkBook.closeWorkBook();
         } catch (Exception e) {
