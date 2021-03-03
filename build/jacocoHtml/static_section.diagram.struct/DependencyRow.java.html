@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DependencyRow.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gruml</a> &gt; <a href="index.source.html" class="el_package">static_section.diagram.struct</a> &gt; <span class="el_source">DependencyRow.java</span></div><h1>DependencyRow.java</h1><pre class="source lang-java linenums">package static_section.diagram.struct;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class DependencyRow {
+
+<span class="nc" id="L8">    public static int IS_USED_BY_ANOTHER_OBJECT_INDEX = 0;</span>
+<span class="nc" id="L9">    public static int IS_INHERITED_FROM_INDEX = 1;</span>
+<span class="nc" id="L10">    public static int NAME_INDEX = 2;</span>
+
+    public final boolean isInheritedFrom;
+    public final boolean isUsedByAnotherObject;
+    public String name;
+    public ModuleRowType type;
+
+<span class="nc" id="L17">    public DependencyRow(ModuleRowType type, String name, boolean isInheritedFrom, boolean isUsedByAnotherObject){</span>
+<span class="nc" id="L18">        this.isInheritedFrom = isInheritedFrom;</span>
+<span class="nc" id="L19">        this.isUsedByAnotherObject = isUsedByAnotherObject;</span>
+<span class="nc" id="L20">        this.type = type;</span>
+<span class="nc" id="L21">        assignName(type, name);</span>
+<span class="nc" id="L22">    }</span>
+
+    private void assignName(ModuleRowType type, String name){
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        if (type == ModuleRowType.METHOD){</span>
+<span class="nc" id="L26">            this.name = String.format(&quot;     %s&quot;, name);</span>
+        } else {
+<span class="nc" id="L28">            this.name = name;</span>
+        }
+<span class="nc" id="L30">    }</span>
+
+    public boolean isObject(){
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        return type == ModuleRowType.OBJECT;</span>
+    }
+
+    public List&lt;String&gt; getRow(){
+<span class="nc" id="L37">        return Arrays.asList(isUsedByAnotherObjectAsString(), isInheritedFromAsString(), name);</span>
+    }
+
+    private String isUsedByAnotherObjectAsString(){
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        if (isUsedByAnotherObject){</span>
+<span class="nc" id="L42">            return String.valueOf('\u279D');</span>
+            //return String.valueOf('\u21D2');
+        }
+<span class="nc" id="L45">        return &quot;&quot;;</span>
+    }
+
+    private String isInheritedFromAsString(){
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        if (isInheritedFrom){</span>
+<span class="nc" id="L50">            return String.valueOf('\u25b7');</span>
+        }
+<span class="nc" id="L52">        return &quot;&quot;;</span>
+    }
+
+<span class="nc" id="L55">    public enum ModuleRowType{</span>
+<span class="nc" id="L56">        OBJECT, METHOD</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

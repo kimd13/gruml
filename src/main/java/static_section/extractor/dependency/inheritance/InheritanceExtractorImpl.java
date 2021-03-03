@@ -20,11 +20,6 @@ public class InheritanceExtractorImpl implements InheritanceExtractor {
     }
 
     @Override
-    public List<String> getAllObjectNames() {
-        return new ArrayList<String>(inheritanceMap.keySet());
-    }
-
-    @Override
     public List<String> getChildren(String objectName) {
         return inheritanceMap.get(objectName).getChildren();
     }

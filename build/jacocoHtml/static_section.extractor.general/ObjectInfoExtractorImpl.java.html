@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ObjectInfoExtractorImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gruml</a> &gt; <a href="index.source.html" class="el_package">static_section.extractor.general</a> &gt; <span class="el_source">ObjectInfoExtractorImpl.java</span></div><h1>ObjectInfoExtractorImpl.java</h1><pre class="source lang-java linenums">package static_section.extractor.general;
+
+import util.regex.RegexUtil;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+<span class="fc" id="L8">public class ObjectInfoExtractorImpl implements ObjectInfoExtractor{</span>
+
+<span class="fc" id="L10">    private final boolean SHOULD_METHODS_INCLUDE_PARAMS = false;</span>
+<span class="fc" id="L11">    private final RegexUtil regexUtil = RegexUtil.getInstance();</span>
+    // key is object name, value is methods
+<span class="fc" id="L13">    private final HashMap&lt;String, List&lt;String&gt;&gt; objectMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L14">    private int numberOfMethods = 0;</span>
+
+    @Override
+    public void extractAllObjectInfo(List&lt;String&gt; objectsAsStrings) {
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        for (String object: objectsAsStrings){</span>
+<span class="fc" id="L19">            String objectName = extractObjectName(object).get(0);</span>
+<span class="fc" id="L20">            List&lt;String&gt; methods = extractMethods(objectName, object, SHOULD_METHODS_INCLUDE_PARAMS);</span>
+<span class="fc" id="L21">            objectMap.put(objectName, methods);</span>
+<span class="fc" id="L22">        }</span>
+<span class="fc" id="L23">    }</span>
+
+    @Override
+    public List&lt;String&gt; getAllObjects() {
+<span class="fc" id="L27">        return new ArrayList&lt;String&gt;(objectMap.keySet());</span>
+    }
+
+    @Override
+    public List&lt;String&gt; getAllObjectMethods(String objectName) {
+<span class="fc" id="L32">        return objectMap.get(objectName);</span>
+    }
+
+    @Override
+    public int getNumberOfMethods() {
+<span class="fc" id="L37">        return numberOfMethods;</span>
+    }
+
+    @Override
+    public int getNumberOfObjects() {
+<span class="fc" id="L42">        return objectMap.size();</span>
+    }
+
+    private List&lt;String&gt; extractMethods(String objectName, String target, boolean withParams){
+<span class="fc" id="L46">        List&lt;String&gt; filteredMethods = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L47">        List&lt;String&gt; declaredMethods = findDeclaredMethods(target);</span>
+
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        for (String declaredMethod: declaredMethods){</span>
+<span class="fc" id="L50">            String methodNameAndParams = extractMethodNameAndParams(declaredMethod);</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">            if (!isConstructor(objectName, methodNameAndParams)){</span>
+<span class="fc" id="L52">                numberOfMethods++;</span>
+<span class="fc" id="L53">                filteredMethods.add(getMethodWithOrWithoutParams(withParams, methodNameAndParams));</span>
+            }
+<span class="fc" id="L55">        }</span>
+
+<span class="fc" id="L57">        return filteredMethods;</span>
+    }
+
+    private String getMethodWithOrWithoutParams(boolean withParams, String method){
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if (!withParams) {</span>
+<span class="fc" id="L62">            return removeParams(method) + &quot;()&quot;;</span>
+        }
+<span class="nc" id="L64">        return method;</span>
+    }
+
+    private String extractMethodNameAndParams(String method){
+<span class="fc" id="L68">        String methodNameAndParamsRegex = &quot;([a-zA-Z0-9_]+) *(\\(.*?\\))&quot;;</span>
+<span class="fc" id="L69">        return regexUtil.getMatched(methodNameAndParamsRegex, method).get(0);</span>
+    }
+
+    private List&lt;String&gt; findDeclaredMethods(String target){
+        // This regex finds all methods whether or not they are declared or called
+<span class="fc" id="L74">        String allMethodRegex = &quot;([a-zA-Z0-9&lt;&gt;_?]+) +([a-zA-Z0-9_]+) *\\(.*?\\) *(\\{|\\;)&quot;;</span>
+<span class="fc" id="L75">        return removeCalledMethods(regexUtil.getMatched(allMethodRegex, target));</span>
+    }
+
+    private List&lt;String&gt; removeCalledMethods(List&lt;String&gt; methods){
+<span class="fc" id="L79">        List&lt;String&gt; declaredMethods = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        for (String method: methods){</span>
+<span class="pc bpc" id="L81" title="2 of 4 branches missed.">            if (!method.contains(&quot;return &quot;) &amp;&amp; !method.contains(&quot;new &quot;)){</span>
+<span class="fc" id="L82">                declaredMethods.add(method);</span>
+            }
+<span class="fc" id="L84">        }</span>
+<span class="fc" id="L85">        return declaredMethods;</span>
+    }
+
+    private boolean isConstructor(String objectName, String method){
+<span class="fc" id="L89">        String justName = removeParams(method);</span>
+<span class="fc" id="L90">        return justName.equals(objectName);</span>
+    }
+
+    private String removeParams(String method){
+<span class="fc" id="L94">        return method.split(&quot;\\(&quot;)[0];</span>
+    }
+
+    private List&lt;String&gt; extractObjectName(String target){
+<span class="fc" id="L98">        String objectRegex = &quot;(?&lt;=class |interface )(.[^\\t\\n\\r ]*)&quot;;</span>
+<span class="fc" id="L99">        return regexUtil.getMatched(objectRegex, target);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

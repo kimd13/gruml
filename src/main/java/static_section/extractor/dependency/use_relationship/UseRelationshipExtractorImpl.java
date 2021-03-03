@@ -39,7 +39,8 @@ public class UseRelationshipExtractorImpl implements UseRelationshipExtractor {
     private void populateUseRelationshipMapValues(String target){
 
         String objectName = extractObjectName(target).get(0);
-        List<String> objectsFoundInTarget = getObjectsFoundInTarget(removeClassDeclaration(target));
+        String withoutClassDeclaration = removeClassDeclaration(target);
+        List<String> objectsFoundInTarget = getObjectsFoundInTarget(withoutClassDeclaration);
         List<String> cleanedObjectsFoundInTarget = new ArrayList<>();
 
         for (String objectFoundInTarget: objectsFoundInTarget){
@@ -55,7 +56,7 @@ public class UseRelationshipExtractorImpl implements UseRelationshipExtractor {
 
     private String removeClassDeclaration(String target){
         // Must remove class declaration to rid of inheritance dependencies
-        return target.replaceFirst("(.*)(\\{)", "");
+        return target.replaceFirst("[^\\{]*", "");
     }
 
     private List<String> getObjectsFoundInTarget(String target){

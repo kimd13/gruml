@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExtractorImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gruml</a> &gt; <a href="index.source.html" class="el_package">static_section.extractor</a> &gt; <span class="el_source">ExtractorImpl.java</span></div><h1>ExtractorImpl.java</h1><pre class="source lang-java linenums">package static_section.extractor;
+
+import static_section.extractor.dependency.inheritance.InheritanceExtractor;
+import static_section.extractor.dependency.inheritance.InheritanceExtractorImpl;
+import static_section.extractor.dependency.use_relationship.UseRelationshipExtractor;
+import static_section.extractor.dependency.use_relationship.UseRelationshipExtractorImpl;
+import static_section.extractor.general.ObjectInfoExtractor;
+import static_section.extractor.general.ObjectInfoExtractorImpl;
+import static_section.extractor.struct.BeginningEndIndices;
+import static_section.extractor.struct.IndexStack;
+import util.file.FileUtil;
+import util.keyword.Keyword;
+import util.regex.RegexUtil;
+import java.util.ArrayList;
+import java.util.List;
+
+<span class="nc" id="L17">public class ExtractorImpl implements Extractor{</span>
+
+<span class="nc" id="L19">    private final InheritanceExtractor inheritanceExtractor = new InheritanceExtractorImpl();</span>
+<span class="nc" id="L20">    private final ObjectInfoExtractor objectInfoExtractor = new ObjectInfoExtractorImpl();</span>
+<span class="nc" id="L21">    private final UseRelationshipExtractor useRelationshipExtractor = new UseRelationshipExtractorImpl(objectInfoExtractor);</span>
+
+<span class="nc" id="L23">    private final RegexUtil regexUtil = RegexUtil.getInstance();</span>
+<span class="nc" id="L24">    private final FileUtil fileUtil = FileUtil.getInstance();</span>
+
+    @Override
+    public void extractAllInfo(String srcPath) {
+<span class="nc" id="L28">        List&lt;String&gt; objectsAsStrings = getAllObjectsAsStrings(srcPath);</span>
+<span class="nc" id="L29">        objectInfoExtractor.extractAllObjectInfo(objectsAsStrings);</span>
+<span class="nc" id="L30">        inheritanceExtractor.extractAllInheritanceInfo(objectsAsStrings);</span>
+<span class="nc" id="L31">        useRelationshipExtractor.extractAllUseRelationshipInfo(objectsAsStrings);</span>
+<span class="nc" id="L32">    }</span>
+
+    @Override
+    public List&lt;String&gt; getAllObjects() {
+<span class="nc" id="L36">        return objectInfoExtractor.getAllObjects();</span>
+    }
+
+    @Override
+    public List&lt;String&gt; getAllObjectMethods(String objectName) {
+<span class="nc" id="L41">        return objectInfoExtractor.getAllObjectMethods(objectName);</span>
+    }
+
+    @Override
+    public boolean isObjectInheritedFrom(String objectName) {
+<span class="nc" id="L46">        return inheritanceExtractor.isObjectInheritedFrom(objectName);</span>
+    }
+
+    @Override
+    public boolean isObjectUsedByAnother(String objectName) {
+<span class="nc" id="L51">        return useRelationshipExtractor.isObjectUsedByAnother(objectName);</span>
+    }
+
+    @Override
+    public int getNumberOfMethods() {
+<span class="nc" id="L56">        return objectInfoExtractor.getNumberOfMethods();</span>
+    }
+
+    @Override
+    public int getNumberOfObjects() {
+<span class="nc" id="L61">        return objectInfoExtractor.getNumberOfObjects();</span>
+    }
+
+    private List&lt;String&gt; getAllObjectsAsStrings(String srcPath){
+<span class="nc" id="L65">        List&lt;String&gt; objectsAsStrings = new ArrayList&lt;&gt;();</span>
+        try {
+<span class="nc" id="L67">            List&lt;String&gt; paths = fileUtil.getAllFilePaths(srcPath);</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">            for (String path : paths) {</span>
+<span class="nc" id="L69">                String fileName = fileUtil.getLastSegmentOfPath(path);</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">                if (isJavaFile(fileName)) {</span>
+<span class="nc" id="L71">                    String fileContent = fileUtil.readFile(path);</span>
+<span class="nc" id="L72">                    String filteredFileContent = removeUnnecessarySubstrings(fileContent);</span>
+<span class="nc" id="L73">                    objectsAsStrings.addAll(separateObjects(filteredFileContent));</span>
+                }
+<span class="nc" id="L75">            }</span>
+<span class="nc" id="L76">        } catch (Exception e){</span>
+<span class="nc" id="L77">            System.out.println(e.getMessage());</span>
+<span class="nc" id="L78">        }</span>
+<span class="nc" id="L79">        return objectsAsStrings;</span>
+    }
+
+    private Boolean isJavaFile(String fileName){
+<span class="nc" id="L83">        return fileName.endsWith(&quot;.java&quot;);</span>
+    }
+
+    private List&lt;String&gt; separateObjects(String filteredFileContent){
+        // Given a file as String, return all the objects it contains
+        // Java files can contain multiple objects(interfaces, classes), which can be nested as well
+        // This causes major complications when extracting info from them
+        // Must first separate all objects as separate Strings
+
+<span class="nc" id="L92">        List&lt;BeginningEndIndices&gt; indices = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L93">        IndexStack indexStack = new IndexStack();</span>
+<span class="nc" id="L94">        boolean isBeginningOfObject = false;</span>
+<span class="nc" id="L95">        int beginningObjectIndex = 0;</span>
+
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        for (int index = 0; index &lt; filteredFileContent.length(); index++) {</span>
+
+<span class="nc" id="L99">            char currentChar = filteredFileContent.charAt(index);</span>
+
+<span class="nc bnc" id="L101" title="All 2 branches missed.">            if (beginsWithKeywordInitials(currentChar)){</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">                if (spellsClass(getKeywordSubstring(index, filteredFileContent, true))){</span>
+<span class="nc" id="L103">                    isBeginningOfObject = true;</span>
+<span class="nc" id="L104">                    beginningObjectIndex = index;</span>
+<span class="nc" id="L105">                    index = index + Keyword.classKeyword.length();</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">                } else if (spellsInterface(getKeywordSubstring(index, filteredFileContent, false))){</span>
+<span class="nc" id="L107">                    isBeginningOfObject = true;</span>
+<span class="nc" id="L108">                    beginningObjectIndex = index;</span>
+<span class="nc" id="L109">                    index = index + Keyword.interfaceKeyword.length();</span>
+                }
+            }
+
+<span class="nc bnc" id="L113" title="All 2 branches missed.">            if (currentChar == '{') {</span>
+<span class="nc" id="L114">                indexStack.push(beginningObjectIndex, isBeginningOfObject);</span>
+<span class="nc" id="L115">                isBeginningOfObject = false;</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">            } else if (currentChar == '}') {</span>
+<span class="nc" id="L117">                IndexStack.MarkedIndex markedIndex = indexStack.pop();</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">                if (markedIndex.isBeginningOfObject){</span>
+<span class="nc" id="L119">                    BeginningEndIndices objectIndex = new BeginningEndIndices(markedIndex.index, index);</span>
+<span class="nc" id="L120">                    indices.add(objectIndex);</span>
+                }
+            }
+        }
+
+<span class="nc" id="L125">        return extractObjects(indices, filteredFileContent);</span>
+    }
+
+    private String getKeywordSubstring(int index, String filteredFileContent, boolean isClass){
+        // Must +1 to account for &quot; &quot;
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (isClass) {</span>
+<span class="nc" id="L131">            return filteredFileContent.substring(index, index + Keyword.classKeyword.length() + 1);</span>
+        } else {
+<span class="nc" id="L133">            return filteredFileContent.substring(index, index + Keyword.interfaceKeyword.length() + 1);</span>
+        }
+    }
+
+    private boolean beginsWithKeywordInitials(char initial){
+<span class="nc bnc" id="L138" title="All 4 branches missed.">        return initial == Keyword.classKeyword.charAt(0) || initial == Keyword.interfaceKeyword.charAt(0);</span>
+    }
+
+    private List&lt;String&gt; extractObjects(List&lt;BeginningEndIndices&gt; indices, String filteredFileContent){
+<span class="nc" id="L142">        List&lt;String&gt; objects = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        for (BeginningEndIndices objectIndex: indices){</span>
+<span class="nc" id="L144">            objects.add(filteredFileContent.substring(objectIndex.beginning, objectIndex.end));</span>
+<span class="nc" id="L145">            filteredFileContent = clearStringSegment(filteredFileContent, objectIndex.beginning, objectIndex.end);</span>
+<span class="nc" id="L146">        }</span>
+<span class="nc" id="L147">        return objects;</span>
+    }
+
+    private String clearStringSegment(String content, int beginning, int end){
+<span class="nc" id="L151">        int size  = end - beginning;</span>
+<span class="nc" id="L152">        return content.substring(0, beginning)</span>
+<span class="nc" id="L153">                + fillerStringOfSize(size)</span>
+<span class="nc" id="L154">                + content.substring(end);</span>
+    }
+
+    private String fillerStringOfSize(int size){
+<span class="nc" id="L158">        return new String(new char[size]).replace(&quot;\0&quot;, &quot; &quot;);</span>
+    }
+
+    private Boolean spellsClass(String str){
+<span class="nc" id="L162">        return str.equals(Keyword.classKeyword + &quot; &quot;);</span>
+    }
+
+    private Boolean spellsInterface(String str){
+<span class="nc" id="L166">        return str.equals(Keyword.interfaceKeyword + &quot; &quot;);</span>
+    }
+
+    private String removeUnnecessarySubstrings(String target){
+<span class="nc" id="L170">        String withoutSingleLineComments = removeSingleLineComments(target);</span>
+<span class="nc" id="L171">        String withoutMultiLineComments = removeMultiLineComments(withoutSingleLineComments);</span>
+<span class="nc" id="L172">        return removeStrings(withoutMultiLineComments);</span>
+    }
+
+    private String removeSingleLineComments(String target){
+<span class="nc" id="L176">        String singleLineCommentRegex = &quot;//.[^\\n\\r]*&quot;;</span>
+<span class="nc" id="L177">        return regexUtil.removeMatched(singleLineCommentRegex, target);</span>
+    }
+
+    private String removeMultiLineComments(String target){
+<span class="nc" id="L181">        String multiLineCommentRegex = &quot;/\\*.+?\\*/&quot;;</span>
+<span class="nc" id="L182">        return regexUtil.removeMatched(multiLineCommentRegex, target);</span>
+    }
+
+    private String removeStrings(String target){
+<span class="nc" id="L186">        String stringRegex = &quot;\&quot;.+?\&quot;&quot;;</span>
+<span class="nc" id="L187">        return regexUtil.removeMatched(stringRegex, target);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
