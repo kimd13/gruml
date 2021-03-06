@@ -7,88 +7,88 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-<span class="fc" id="L10">public class InheritanceExtractorImpl implements InheritanceExtractor {</span>
+<span class="nc" id="L10">public class InheritanceExtractorImpl implements InheritanceExtractor {</span>
 
-<span class="fc" id="L12">    private final RegexUtil regexUtil = RegexUtil.getInstance();</span>
-<span class="fc" id="L13">    private final HashMap&lt;String, ClassInfoContainer&gt; inheritanceMap = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L12">    private final RegexUtil regexUtil = RegexUtil.getInstance();</span>
+<span class="nc" id="L13">    private final HashMap&lt;String, ClassInfoContainer&gt; inheritanceMap = new HashMap&lt;&gt;();</span>
 
     @Override
     public void extractAllInheritanceInfo(List&lt;String&gt; objectsAsStrings) {
-<span class="fc bfc" id="L17" title="All 2 branches covered.">        for (String object: objectsAsStrings){</span>
-<span class="fc" id="L18">            populateInheritanceMap(object);</span>
-<span class="fc" id="L19">        }</span>
-<span class="fc" id="L20">    }</span>
+<span class="nc bnc" id="L17" title="All 2 branches missed.">        for (String object: objectsAsStrings){</span>
+<span class="nc" id="L18">            populateInheritanceMap(object);</span>
+<span class="nc" id="L19">        }</span>
+<span class="nc" id="L20">    }</span>
 
     @Override
     public List&lt;String&gt; getChildren(String objectName) {
-<span class="fc" id="L24">        return inheritanceMap.get(objectName).getChildren();</span>
+<span class="nc" id="L24">        return inheritanceMap.get(objectName).getChildren();</span>
     }
 
     @Override
     public boolean isObjectInheritedFrom(String objectName) {
-<span class="fc" id="L29">        ClassInfoContainer classInfoContainer = inheritanceMap.get(objectName);</span>
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if (classInfoContainer == null){</span>
+<span class="nc" id="L29">        ClassInfoContainer classInfoContainer = inheritanceMap.get(objectName);</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        if (classInfoContainer == null){</span>
 <span class="nc" id="L31">            return false;</span>
         } else {
-<span class="fc" id="L33">            return classInfoContainer.isParent();</span>
+<span class="nc" id="L33">            return classInfoContainer.isParent();</span>
         }
     }
 
     @Override
     public Boolean checkIfInterface(String objectName) {
-<span class="fc" id="L39">        return inheritanceMap.get(objectName).isInterface();</span>
+<span class="nc" id="L39">        return inheritanceMap.get(objectName).isInterface();</span>
     }
 
     public void populateInheritanceMap(String target){
-<span class="fc" id="L43">        List&lt;String&gt; inheritanceSubstrings = getInheritanceSubstrings(target);</span>
-<span class="fc" id="L44">        List&lt;InheritanceRelationship&gt; inheritanceRelationships = convertInheritanceSubstringsToRelationships(inheritanceSubstrings);</span>
-<span class="fc bfc" id="L45" title="All 2 branches covered.">        for (InheritanceRelationship relationship: inheritanceRelationships){</span>
-<span class="fc" id="L46">            inheritanceMap.computeIfAbsent(relationship.getParent(), info -&gt; new ClassInfoContainer())</span>
-<span class="fc" id="L47">                    .addChild(relationship.getChild())</span>
-<span class="fc" id="L48">                    .setIsParent(true)</span>
-<span class="fc" id="L49">                    .setIsInterface(relationship.isParentInterface());</span>
-<span class="fc" id="L50">        }</span>
-<span class="fc" id="L51">    }</span>
+<span class="nc" id="L43">        List&lt;String&gt; inheritanceSubstrings = getInheritanceSubstrings(target);</span>
+<span class="nc" id="L44">        List&lt;InheritanceRelationship&gt; inheritanceRelationships = convertInheritanceSubstringsToRelationships(inheritanceSubstrings);</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        for (InheritanceRelationship relationship: inheritanceRelationships){</span>
+<span class="nc" id="L46">            inheritanceMap.computeIfAbsent(relationship.getParent(), info -&gt; new ClassInfoContainer())</span>
+<span class="nc" id="L47">                    .addChild(relationship.getChild())</span>
+<span class="nc" id="L48">                    .setIsParent(true)</span>
+<span class="nc" id="L49">                    .setIsInterface(relationship.isParentInterface());</span>
+<span class="nc" id="L50">        }</span>
+<span class="nc" id="L51">    }</span>
 
     public List&lt;InheritanceRelationship&gt; convertInheritanceSubstringsToRelationships(List&lt;String&gt; inheritanceSubstrings){
-<span class="fc" id="L54">        List&lt;InheritanceRelationship&gt; relationships = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L55" title="All 2 branches covered.">        for (String inheritanceSubstring : inheritanceSubstrings) {</span>
-<span class="fc" id="L56">            String childName = extractChildName(inheritanceSubstring);</span>
-<span class="fc" id="L57">            List&lt;String&gt; interfaceParents = extractParents(inheritanceSubstring, true);</span>
-<span class="fc" id="L58">            List&lt;String&gt; classParents = extractParents(inheritanceSubstring, false);</span>
-<span class="fc" id="L59">            interfaceParents.forEach(parent -&gt; {</span>
-<span class="fc" id="L60">                relationships.add(new InheritanceRelationship(childName, &quot;implements&quot;, parent));</span>
-<span class="fc" id="L61">            });</span>
-<span class="fc" id="L62">            classParents.forEach(parent -&gt; {</span>
-<span class="fc" id="L63">                relationships.add(new InheritanceRelationship(childName, &quot;extends&quot;, parent));</span>
-<span class="fc" id="L64">            });</span>
-<span class="fc" id="L65">        }</span>
-<span class="fc" id="L66">        return relationships;</span>
+<span class="nc" id="L54">        List&lt;InheritanceRelationship&gt; relationships = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        for (String inheritanceSubstring : inheritanceSubstrings) {</span>
+<span class="nc" id="L56">            String childName = extractChildName(inheritanceSubstring);</span>
+<span class="nc" id="L57">            List&lt;String&gt; interfaceParents = extractParents(inheritanceSubstring, true);</span>
+<span class="nc" id="L58">            List&lt;String&gt; classParents = extractParents(inheritanceSubstring, false);</span>
+<span class="nc" id="L59">            interfaceParents.forEach(parent -&gt; {</span>
+<span class="nc" id="L60">                relationships.add(new InheritanceRelationship(childName, &quot;implements&quot;, parent));</span>
+<span class="nc" id="L61">            });</span>
+<span class="nc" id="L62">            classParents.forEach(parent -&gt; {</span>
+<span class="nc" id="L63">                relationships.add(new InheritanceRelationship(childName, &quot;extends&quot;, parent));</span>
+<span class="nc" id="L64">            });</span>
+<span class="nc" id="L65">        }</span>
+<span class="nc" id="L66">        return relationships;</span>
     }
 
     public String extractChildName(String inheritanceSubstring){
-<span class="fc" id="L70">        String [] classKeywordRemoved = inheritanceSubstring.split(&quot;class&quot;);</span>
-<span class="fc" id="L71">        return extractFirstWordInString(classKeywordRemoved[1]);</span>
+<span class="nc" id="L70">        String [] classKeywordRemoved = inheritanceSubstring.split(&quot;class&quot;);</span>
+<span class="nc" id="L71">        return extractFirstWordInString(classKeywordRemoved[1]);</span>
     }
 
     public List&lt;String&gt; extractParents(String inheritanceSubstring, Boolean getInterfaceParents){
-<span class="fc bfc" id="L75" title="All 2 branches covered.">        String splitKeyword =  getInterfaceParents ? &quot;implements&quot; : &quot;extends&quot;;</span>
-<span class="fc" id="L76">        List&lt;String&gt; parents = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L77">        String [] split = inheritanceSubstring.split(splitKeyword);</span>
-<span class="fc bfc" id="L78" title="All 2 branches covered.">        for (int i = 1; i &lt; split.length; i++){</span>
-<span class="fc" id="L79">            String parent = extractFirstWordInString(split[i]);</span>
-<span class="fc" id="L80">            parents.add(parent);</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        String splitKeyword =  getInterfaceParents ? &quot;implements&quot; : &quot;extends&quot;;</span>
+<span class="nc" id="L76">        List&lt;String&gt; parents = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L77">        String [] split = inheritanceSubstring.split(splitKeyword);</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        for (int i = 1; i &lt; split.length; i++){</span>
+<span class="nc" id="L79">            String parent = extractFirstWordInString(split[i]);</span>
+<span class="nc" id="L80">            parents.add(parent);</span>
         }
-<span class="fc" id="L82">        return parents;</span>
+<span class="nc" id="L82">        return parents;</span>
     }
 
     public String extractFirstWordInString(String target){
-<span class="fc" id="L86">        return target.split(&quot; &quot;)[1];</span>
+<span class="nc" id="L86">        return target.split(&quot; &quot;)[1];</span>
     }
 
     public List&lt;String&gt; getInheritanceSubstrings(String target){
-<span class="fc" id="L90">        String inheritanceRegex = &quot;(abstract )?class(.[^\\t\\n\\r ]*)(( extends| implements) (.[^\\t\\n\\r ]*))*&quot;;</span>
-<span class="fc" id="L91">         return regexUtil.getMatched(inheritanceRegex, target);</span>
+<span class="nc" id="L90">        String inheritanceRegex = &quot;(abstract )?class(.[^\\t\\n\\r ]*)(( extends| implements) (.[^\\t\\n\\r ]*))*&quot;;</span>
+<span class="nc" id="L91">         return regexUtil.getMatched(inheritanceRegex, target);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

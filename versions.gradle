@@ -1,0 +1,25 @@
+ext.deps = [:]
+
+def deps = [:]
+
+def versions = [:]
+versions.jacoco = '0.8.6'
+versions.mockito = '3.8.0'
+versions.junit = '4.12'
+versions.poi = '4.0.0'
+versions.jgit =  '2.2.0.201212191850-r'
+versions.google_java_format = '1.9'
+deps.versions = versions
+
+def test = [:]
+test.junit = "junit:junit:$versions.junit"
+test.mockito = "org.mockito:mockito-core:$versions.mockito"
+deps.test = test
+
+def io = [:]
+io.poi = "org.apache.poi:poi-ooxml:$versions.poi"
+io.jgit = "org.eclipse.jgit:org.eclipse.jgit:$versions.jgit"
+io.google_java_format = "com.google.googlejavaformat:google-java-format:$versions.google_java_format"
+deps.io = io
+
+ext.deps = deps

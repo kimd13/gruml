@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="static_section.extractor.general.ObjectInfoExtractorTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2021-03-03T03:56:30" hostname="MSI" time="0.003">
+<testsuite name="static_section.extractor.general.ObjectInfoExtractorTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2021-03-06T18:14:55" hostname="MSI" time="0.007">
   <properties/>
-  <testcase name="getAllObjects_testPopulation" classname="static_section.extractor.general.ObjectInfoExtractorTest" time="0.001"/>
-  <testcase name="getNumberOfMethods_testCorrectAmount" classname="static_section.extractor.general.ObjectInfoExtractorTest" time="0.0"/>
-  <testcase name="getAllObjectMethods_testPopulation" classname="static_section.extractor.general.ObjectInfoExtractorTest" time="0.0"/>
+  <testcase name="getAllObjects_testPopulation" classname="static_section.extractor.general.ObjectInfoExtractorTest" time="0.004"/>
+  <testcase name="getNumberOfMethods_testCorrectAmount" classname="static_section.extractor.general.ObjectInfoExtractorTest" time="0.001"/>
+  <testcase name="getAllObjectMethods_testPopulation" classname="static_section.extractor.general.ObjectInfoExtractorTest" time="0.001"/>
   <testcase name="getNumberOfObjects_testCorrectAmount" classname="static_section.extractor.general.ObjectInfoExtractorTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

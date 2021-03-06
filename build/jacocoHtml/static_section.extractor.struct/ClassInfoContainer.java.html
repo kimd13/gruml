@@ -3,11 +3,11 @@
 import java.util.ArrayList;
 import java.util.List;
 
-<span class="fc" id="L6">public class ClassInfoContainer {</span>
+<span class="nc" id="L6">public class ClassInfoContainer {</span>
 
-<span class="fc" id="L8">    private Boolean isInterface = false;</span>
-<span class="fc" id="L9">    private boolean isParent = false;</span>
-<span class="fc" id="L10">    private final List&lt;String&gt; children = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L8">    private Boolean isInterface = false;</span>
+<span class="nc" id="L9">    private boolean isParent = false;</span>
+<span class="nc" id="L10">    private final List&lt;String&gt; children = new ArrayList&lt;&gt;();</span>
 
     @Override
     public String toString() {
@@ -15,31 +15,31 @@ import java.util.List;
     }
 
     public Boolean isInterface() {
-<span class="fc" id="L18">        return isInterface;</span>
+<span class="nc" id="L18">        return isInterface;</span>
     }
 
 
     public boolean isParent(){
-<span class="fc" id="L23">        return isParent;</span>
+<span class="nc" id="L23">        return isParent;</span>
     }
 
     public List&lt;String&gt; getChildren() {
-<span class="fc" id="L27">        return children;</span>
+<span class="nc" id="L27">        return children;</span>
     }
 
     public ClassInfoContainer setIsParent(boolean isParent){
-<span class="fc" id="L31">        this.isParent = isParent;</span>
-<span class="fc" id="L32">        return this;</span>
+<span class="nc" id="L31">        this.isParent = isParent;</span>
+<span class="nc" id="L32">        return this;</span>
     }
 
     public ClassInfoContainer setIsInterface(Boolean isInterface) {
-<span class="fc" id="L36">        this.isInterface = isInterface;</span>
-<span class="fc" id="L37">        return this;</span>
+<span class="nc" id="L36">        this.isInterface = isInterface;</span>
+<span class="nc" id="L37">        return this;</span>
     }
 
     public ClassInfoContainer addChild(String child){
-<span class="fc" id="L41">        children.add(child);</span>
-<span class="fc" id="L42">        return this;</span>
+<span class="nc" id="L41">        children.add(child);</span>
+<span class="nc" id="L42">        return this;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
