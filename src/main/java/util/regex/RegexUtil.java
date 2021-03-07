@@ -1,10 +1,7 @@
 package util.regex;
 
-import javafx.util.Pair;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

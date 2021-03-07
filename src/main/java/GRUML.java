@@ -18,7 +18,7 @@ public class GRUML {
     public static void main(String[] args) {
         //populateInputReader(args);
         String srcUri = "https://github.com/kimd13/java-class-inheritance-dependency-example";//inputReader.getFlagValue("testing");
-       // cloneInputSrc(srcUri);
+        //cloneInputSrc(srcUri);
         DependencyDiagram dependencyDiagram = createDependencyDiagram();
         SequenceDiagram sequenceDiagram = createSequenceDiagram();
         dependencyDiagram.create(CLONED_SRC_DESTINATION);

@@ -1,17 +1,10 @@
 package static_section.diagram;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import static_section.diagram.struct.DependencyChannel;
 import static_section.diagram.struct.DependencyWorkBook;
 import static_section.diagram.struct.DependencyRow;
 import static_section.extractor.Extractor;
 import static_section.extractor.ExtractorImpl;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class DependencyDiagramImpl implements DependencyDiagram {
 

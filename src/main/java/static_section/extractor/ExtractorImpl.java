@@ -1,5 +1,6 @@
 package static_section.extractor;
 
+import com.google.googlejavaformat.java.Formatter;
 import static_section.extractor.dependency.inheritance.InheritanceExtractor;
 import static_section.extractor.dependency.inheritance.InheritanceExtractorImpl;
 import static_section.extractor.dependency.use_relationship.UseRelationshipExtractor;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExtractorImpl implements Extractor{
+
+    private final Formatter formatter = new Formatter();
 
     private final InheritanceExtractor inheritanceExtractor = new InheritanceExtractorImpl();
     private final ObjectInfoExtractor objectInfoExtractor = new ObjectInfoExtractorImpl();
@@ -69,18 +72,19 @@ public class ExtractorImpl implements Extractor{
                 String fileName = fileUtil.getLastSegmentOfPath(path);
                 if (isJavaFile(fileName)) {
                     String fileContent = fileUtil.readFile(path);
-                    String filteredFileContent = removeUnnecessarySubstrings(fileContent);
+                    String formattedFileContent = formatter.formatSource(fileContent);
+                    String filteredFileContent = removeUnnecessarySubstrings(formattedFileContent);
                     objectsAsStrings.addAll(separateObjects(filteredFileContent));
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e){ // formatter will throw when java file incorrectly formatted
             System.out.println(e.getMessage());
         }
         return objectsAsStrings;
     }
 
     private Boolean isJavaFile(String fileName){
-        return fileName.endsWith(".java");
+        return fileName.endsWith("Bike.java");
     }
 
     private List<String> separateObjects(String filteredFileContent){
