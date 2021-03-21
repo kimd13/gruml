@@ -11,8 +11,6 @@ import java.util.stream.Stream;
 
 public final class FileUtil {
 
-    private static FileUtil INSTANCE = null;
-
     private FileUtil(){}
 
     public static String readFile(String path)
@@ -34,12 +32,5 @@ public final class FileUtil {
     public static String getLastSegmentOfPath(String path){
         String[] directories = path.split("\\\\");
         return directories[directories.length - 1];
-    }
-
-    public synchronized static FileUtil getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new FileUtil();
-        }
-        return INSTANCE;
     }
 }

@@ -9,7 +9,6 @@ import java.util.List;
 
 public class InheritanceExtractorImpl implements InheritanceExtractor {
 
-    private final RegexUtil regexUtil = RegexUtil.getInstance();
     private final HashMap<String, ClassInfoContainer> inheritanceMap = new HashMap<>();
 
     @Override
@@ -88,6 +87,6 @@ public class InheritanceExtractorImpl implements InheritanceExtractor {
 
     public List<String> getInheritanceSubstrings(String target){
         String inheritanceRegex = "(abstract )?class(.[^\\t\\n\\r ]*)(( extends| implements) (.[^\\t\\n\\r ]*))*";
-         return regexUtil.getMatched(inheritanceRegex, target);
+         return RegexUtil.getMatched(inheritanceRegex, target);
     }
 }

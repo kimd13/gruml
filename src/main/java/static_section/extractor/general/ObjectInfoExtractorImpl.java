@@ -8,7 +8,6 @@ import java.util.List;
 public class ObjectInfoExtractorImpl implements ObjectInfoExtractor{
 
     private final boolean SHOULD_METHODS_INCLUDE_PARAMS = false;
-    private final RegexUtil regexUtil = RegexUtil.getInstance();
     // key is object name, value is methods
     private final HashMap<String, List<String>> objectMap = new HashMap<>();
     private int numberOfMethods = 0;
@@ -66,13 +65,13 @@ public class ObjectInfoExtractorImpl implements ObjectInfoExtractor{
 
     private String extractMethodNameAndParams(String method){
         String methodNameAndParamsRegex = "([a-zA-Z0-9_]+) *(\\(.*?\\))";
-        return regexUtil.getMatched(methodNameAndParamsRegex, method).get(0);
+        return RegexUtil.getMatched(methodNameAndParamsRegex, method).get(0);
     }
 
     private List<String> findDeclaredMethods(String target){
         // This regex finds all methods whether or not they are declared or called
         String allMethodRegex = "([a-zA-Z0-9<>_?]+) +([a-zA-Z0-9_]+) *\\(.*?\\) *(\\{|\\;)";
-        return removeCalledMethods(regexUtil.getMatched(allMethodRegex, target));
+        return removeCalledMethods(RegexUtil.getMatched(allMethodRegex, target));
     }
 
     private List<String> removeCalledMethods(List<String> methods){
@@ -96,6 +95,6 @@ public class ObjectInfoExtractorImpl implements ObjectInfoExtractor{
 
     private List<String> extractObjectName(String target){
         String objectRegex = "(?<=class |interface )(.[^\\t\\n\\r ]*)";
-        return regexUtil.getMatched(objectRegex, target);
+        return RegexUtil.getMatched(objectRegex, target);
     }
 }

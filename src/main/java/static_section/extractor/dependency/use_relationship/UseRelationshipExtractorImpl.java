@@ -7,7 +7,6 @@ import java.util.*;
 
 public class UseRelationshipExtractorImpl implements UseRelationshipExtractor {
 
-    private final RegexUtil regexUtil = RegexUtil.getInstance();
     private final HashMap<String, UseRelationshipContainer> useRelationshipMap = new HashMap<>();
     private final ObjectInfoExtractor objectInfoExtractor;
 
@@ -27,6 +26,11 @@ public class UseRelationshipExtractorImpl implements UseRelationshipExtractor {
     @Override
     public boolean isObjectUsedByAnother(String objectName) {
         return !useRelationshipMap.get(objectName).getUsedBy().isEmpty();
+    }
+
+    @Override
+    public Set<String> getUsedByObjects(String objectName) {
+        return useRelationshipMap.get(objectName).getUsedBy();
     }
 
     private void populateUseRelationshipMapKeys(){
@@ -61,7 +65,7 @@ public class UseRelationshipExtractorImpl implements UseRelationshipExtractor {
 
     private List<String> getObjectsFoundInTarget(String target){
         String objectsInProjectRegex = getObjectsInProjectRegex();
-        return regexUtil.getMatched(objectsInProjectRegex, target);
+        return RegexUtil.getMatched(objectsInProjectRegex, target);
     }
 
     private boolean isNotSelf(String me, String other){
@@ -92,6 +96,6 @@ public class UseRelationshipExtractorImpl implements UseRelationshipExtractor {
 
     private List<String> extractObjectName(String target){
         String objectRegex = "(?<=class |interface )(.[^\\t\\n\\r ]*)";
-        return regexUtil.getMatched(objectRegex, target);
+        return RegexUtil.getMatched(objectRegex, target);
     }
 }

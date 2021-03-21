@@ -23,6 +23,10 @@ public class DependencyWorkBook {
     private int rowIndex = 0;
     private int columnIndex = 0;
 
+    public int getRowIndex(){
+        return rowIndex;
+    }
+
     public void createWorkBook(String workbookName){
         this.workbookName = workbookName;
         workbook = new XSSFWorkbook();
@@ -50,10 +54,28 @@ public class DependencyWorkBook {
         columnIndex += numberOfChannels;
     }
 
-    private CellStyle getLeftBorderOutlinedStyle(){
-        CellStyle style = workbook.createCellStyle();
-        style.setBorderLeft(BorderStyle.MEDIUM);
-        return style;
+    public void markDependencyChannel(DependencyChannelMarker marker, int rowIndex, int dependencyChannelIndex) {
+       Cell cell =  spreadsheet.getRow(rowIndex).getCell(dependencyChannelIndex);
+       switch(marker){
+           case ASSIGNMENT:
+               cell.setCellStyle(getRedColoredLeftBorderOutlinedCellStyle());
+               cell.setCellValue(String.valueOf('\u21D2'));
+               return;
+           case USES:
+               cell.setCellValue(String.valueOf('\u2190'));
+               return;
+           case INHERITS:
+               cell.setCellValue(String.valueOf('\u140A'));
+       }
+    }
+
+    /**
+     * ASSIGNMENT = marks that this dependency channel belongs to object (=>)
+     * INHERITS = marks that this object inherits from owner of channel (<|)
+     * USES = marks that this object use owner of channel (<-)
+     */
+    public enum DependencyChannelMarker{
+        ASSIGNMENT, INHERITS, USES
     }
 
     public void addRow(DependencyRow dependencyRow){
@@ -84,6 +106,19 @@ public class DependencyWorkBook {
         Cell cell = row.createCell(column);
         cell.setCellValue(value);
         return cell;
+    }
+
+    private CellStyle getRedColoredLeftBorderOutlinedCellStyle(){
+        CellStyle style = workbook.createCellStyle();
+        style.setBorderLeft(BorderStyle.MEDIUM);
+        style.setFont(getRedColoredFont());
+        return style;
+    }
+
+    private CellStyle getLeftBorderOutlinedStyle(){
+        CellStyle style = workbook.createCellStyle();
+        style.setBorderLeft(BorderStyle.MEDIUM);
+        return style;
     }
 
     private CellStyle getBoldedCellStyle(){

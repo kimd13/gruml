@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 public class RegexUtil {
 
-    private static RegexUtil INSTANCE = null;
     private static int REGEX_FLAG = Pattern.DOTALL;
 
     private RegexUtil(){}
@@ -24,12 +23,5 @@ public class RegexUtil {
 
     public static String removeMatched(String regex, String target){
         return Pattern.compile(regex, REGEX_FLAG).matcher(target).replaceAll("");
-    }
-
-    public synchronized static RegexUtil getInstance(){
-        if (INSTANCE == null){
-            INSTANCE = new RegexUtil();
-        }
-        return INSTANCE;
     }
 }
