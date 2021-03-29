@@ -1,12 +1,15 @@
 package static_section.diagram;
 
 import static_section.diagram.struct.DependencyDiagramObjectSection;
-import static_section.diagram.struct.DependencyWorkBook;
 import static_section.diagram.struct.DependencyRow;
+import static_section.diagram.struct.DependencyWorkBook;
 import static_section.extractor.Extractor;
 import static_section.extractor.ExtractorImpl;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DependencyDiagramImpl implements DependencyDiagram {
 
@@ -20,7 +23,7 @@ public class DependencyDiagramImpl implements DependencyDiagram {
         populateDependencyWorkbook(dependencyWorkBook);
     }
 
-    private DependencyWorkBook createDependencyWorkbook(){
+    private DependencyWorkBook createDependencyWorkbook() {
         DependencyWorkBook dependencyWorkBook = new DependencyWorkBook();
         dependencyWorkBook.createWorkBook("testing");
         dependencyWorkBook.createSpreadsheet("dependency");
@@ -33,7 +36,7 @@ public class DependencyDiagramImpl implements DependencyDiagram {
         closeDependencyWorkbook(dependencyWorkBook);
     }
 
-    private void populateSections(DependencyWorkBook dependencyWorkBook){
+    private void populateSections(DependencyWorkBook dependencyWorkBook) {
         // the number of objects indicates how many dependency channels (columns) are allocated
         int numberOfObjects = extractor.getNumberOfObjects();
         int sumOfMethodsAndObjects = numberOfObjects + extractor.getNumberOfMethods();
@@ -54,7 +57,7 @@ public class DependencyDiagramImpl implements DependencyDiagram {
         }
     }
 
-    private void markDependencyChannels(DependencyWorkBook dependencyWorkBook){
+    private void markDependencyChannels(DependencyWorkBook dependencyWorkBook) {
         for (Map.Entry<String, DependencyDiagramObjectSection> entry : sections.entrySet()) {
 
             String objectName = entry.getKey();
@@ -67,14 +70,14 @@ public class DependencyDiagramImpl implements DependencyDiagram {
                     section.getBeginningIndex(), section.getDependencyChannelAssignment());
 
             // marks use relationships
-            for (String usedBy: usedByObjects){
-                int usedByBeginningIndex =  sections.get(usedBy).getBeginningIndex();
+            for (String usedBy : usedByObjects) {
+                int usedByBeginningIndex = sections.get(usedBy).getBeginningIndex();
                 dependencyWorkBook.markDependencyChannel(DependencyWorkBook.DependencyChannelMarker.USES,
                         usedByBeginningIndex, section.getDependencyChannelAssignment());
             }
 
             // marks inheritance
-            for (String child: children){
+            for (String child : children) {
                 int childBeginningIndex = sections.get(child).getBeginningIndex();
                 dependencyWorkBook.markDependencyChannel(DependencyWorkBook.DependencyChannelMarker.INHERITS,
                         childBeginningIndex, section.getDependencyChannelAssignment());
@@ -82,22 +85,22 @@ public class DependencyDiagramImpl implements DependencyDiagram {
         }
     }
 
-    private void addObjectDependencyRow(DependencyWorkBook dependencyWorkBook, String objectName){
+    private void addObjectDependencyRow(DependencyWorkBook dependencyWorkBook, String objectName) {
         DependencyRow object = new DependencyRow(DependencyRow.ModuleRowType.OBJECT, objectName,
-            extractor.isObjectInheritedFrom(objectName), extractor.isObjectUsedByAnother(objectName));
+                extractor.isObjectInheritedFrom(objectName), extractor.isObjectUsedByAnother(objectName));
         dependencyWorkBook.addRow(object);
     }
 
-    private void addMethodDependencyRow(DependencyWorkBook dependencyWorkBook, String methodName){
+    private void addMethodDependencyRow(DependencyWorkBook dependencyWorkBook, String methodName) {
         DependencyRow method = new DependencyRow(DependencyRow.ModuleRowType.METHOD, methodName,
                 false, false);
         dependencyWorkBook.addRow(method);
     }
 
-    private void closeDependencyWorkbook(DependencyWorkBook dependencyWorkBook){
+    private void closeDependencyWorkbook(DependencyWorkBook dependencyWorkBook) {
         try {
             dependencyWorkBook.closeWorkBook();
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Oops");
         }
     }

@@ -22,15 +22,15 @@ public class UseRelationshipContainer {
         return usedBy;
     }
 
-    public void addToUsedBy(String user){
+    public void addToUsedBy(String user) {
         this.usedBy.add(user);
     }
 
-    public void addToUsed(String used){
+    public void addToUsed(String used) {
         this.used.add(used);
     }
 
-    public void addAllToUsed(List<String> used){
+    public void addAllToUsed(List<String> used) {
         this.used.addAll(used);
     }
 }

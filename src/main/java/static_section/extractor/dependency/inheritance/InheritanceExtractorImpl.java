@@ -3,6 +3,7 @@ package static_section.extractor.dependency.inheritance;
 import static_section.extractor.struct.ClassInfoContainer;
 import static_section.extractor.struct.InheritanceRelationship;
 import util.regex.RegexUtil;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +14,7 @@ public class InheritanceExtractorImpl implements InheritanceExtractor {
 
     @Override
     public void extractAllInheritanceInfo(List<String> objectsAsStrings) {
-        for (String object: objectsAsStrings){
+        for (String object : objectsAsStrings) {
             populateInheritanceMap(object);
         }
     }
@@ -26,7 +27,7 @@ public class InheritanceExtractorImpl implements InheritanceExtractor {
     @Override
     public boolean isObjectInheritedFrom(String objectName) {
         ClassInfoContainer classInfoContainer = inheritanceMap.get(objectName);
-        if (classInfoContainer == null){
+        if (classInfoContainer == null) {
             return false;
         } else {
             return classInfoContainer.isParent();
@@ -38,10 +39,10 @@ public class InheritanceExtractorImpl implements InheritanceExtractor {
         return inheritanceMap.get(objectName).isInterface();
     }
 
-    public void populateInheritanceMap(String target){
+    public void populateInheritanceMap(String target) {
         List<String> inheritanceSubstrings = getInheritanceSubstrings(target);
         List<InheritanceRelationship> inheritanceRelationships = convertInheritanceSubstringsToRelationships(inheritanceSubstrings);
-        for (InheritanceRelationship relationship: inheritanceRelationships){
+        for (InheritanceRelationship relationship : inheritanceRelationships) {
             inheritanceMap.computeIfAbsent(relationship.getParent(), info -> new ClassInfoContainer())
                     .addChild(relationship.getChild())
                     .setIsParent(true)
@@ -49,7 +50,7 @@ public class InheritanceExtractorImpl implements InheritanceExtractor {
         }
     }
 
-    public List<InheritanceRelationship> convertInheritanceSubstringsToRelationships(List<String> inheritanceSubstrings){
+    public List<InheritanceRelationship> convertInheritanceSubstringsToRelationships(List<String> inheritanceSubstrings) {
         List<InheritanceRelationship> relationships = new ArrayList<>();
         for (String inheritanceSubstring : inheritanceSubstrings) {
             String childName = extractChildName(inheritanceSubstring);
@@ -65,28 +66,28 @@ public class InheritanceExtractorImpl implements InheritanceExtractor {
         return relationships;
     }
 
-    public String extractChildName(String inheritanceSubstring){
-        String [] classKeywordRemoved = inheritanceSubstring.split("class");
+    public String extractChildName(String inheritanceSubstring) {
+        String[] classKeywordRemoved = inheritanceSubstring.split("class");
         return extractFirstWordInString(classKeywordRemoved[1]);
     }
 
-    public List<String> extractParents(String inheritanceSubstring, Boolean getInterfaceParents){
-        String splitKeyword =  getInterfaceParents ? "implements" : "extends";
+    public List<String> extractParents(String inheritanceSubstring, Boolean getInterfaceParents) {
+        String splitKeyword = getInterfaceParents ? "implements" : "extends";
         List<String> parents = new ArrayList<>();
-        String [] split = inheritanceSubstring.split(splitKeyword);
-        for (int i = 1; i < split.length; i++){
+        String[] split = inheritanceSubstring.split(splitKeyword);
+        for (int i = 1; i < split.length; i++) {
             String parent = extractFirstWordInString(split[i]);
             parents.add(parent);
         }
         return parents;
     }
 
-    public String extractFirstWordInString(String target){
+    public String extractFirstWordInString(String target) {
         return target.split(" ")[1];
     }
 
-    public List<String> getInheritanceSubstrings(String target){
+    public List<String> getInheritanceSubstrings(String target) {
         String inheritanceRegex = "(abstract )?class(.[^\\t\\n\\r ]*)(( extends| implements) (.[^\\t\\n\\r ]*))*";
-         return RegexUtil.getMatched(inheritanceRegex, target);
+        return RegexUtil.getMatched(inheritanceRegex, target);
     }
 }

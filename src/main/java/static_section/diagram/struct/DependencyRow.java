@@ -14,44 +14,44 @@ public class DependencyRow {
     public String name;
     public ModuleRowType type;
 
-    public DependencyRow(ModuleRowType type, String name, boolean isInheritedFrom, boolean isUsedByAnotherObject){
+    public DependencyRow(ModuleRowType type, String name, boolean isInheritedFrom, boolean isUsedByAnotherObject) {
         this.isInheritedFrom = isInheritedFrom;
         this.isUsedByAnotherObject = isUsedByAnotherObject;
         this.type = type;
         assignName(type, name);
     }
 
-    private void assignName(ModuleRowType type, String name){
-        if (type == ModuleRowType.METHOD){
+    private void assignName(ModuleRowType type, String name) {
+        if (type == ModuleRowType.METHOD) {
             this.name = String.format("     %s", name);
         } else {
             this.name = name;
         }
     }
 
-    public boolean isObject(){
+    public boolean isObject() {
         return type == ModuleRowType.OBJECT;
     }
 
-    public List<String> getRow(){
+    public List<String> getRow() {
         return Arrays.asList(isUsedByAnotherObjectAsString(), isInheritedFromAsString(), name);
     }
 
-    private String isUsedByAnotherObjectAsString(){
-        if (isUsedByAnotherObject){
-            return String.valueOf('\u2192');
+    private String isUsedByAnotherObjectAsString() {
+        if (isUsedByAnotherObject) {
+            return "\u21FE";
         }
         return "";
     }
 
-    private String isInheritedFromAsString(){
-        if (isInheritedFrom){
-            return String.valueOf('\u1405');
+    private String isInheritedFromAsString() {
+        if (isInheritedFrom) {
+            return "\u1405";
         }
         return "";
     }
 
-    public enum ModuleRowType{
+    public enum ModuleRowType {
         OBJECT, METHOD
     }
 }

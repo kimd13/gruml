@@ -11,7 +11,8 @@ import java.util.stream.Stream;
 
 public final class FileUtil {
 
-    private FileUtil(){}
+    private FileUtil() {
+    }
 
     public static String readFile(String path)
             throws IOException {
@@ -29,7 +30,7 @@ public final class FileUtil {
         return listOfPaths;
     }
 
-    public static String getLastSegmentOfPath(String path){
+    public static String getLastSegmentOfPath(String path) {
         String[] directories = path.split("\\\\");
         return directories[directories.length - 1];
     }

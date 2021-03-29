@@ -5,6 +5,8 @@ import java.util.Set;
 
 public interface UseRelationshipExtractor {
     void extractAllUseRelationshipInfo(List<String> objectsAsStrings);
+
     boolean isObjectUsedByAnother(String objectName);
+
     Set<String> getUsedByObjects(String objectName);
 }

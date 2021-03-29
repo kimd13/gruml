@@ -1,9 +1,9 @@
-import static_section.diagram.DependencyDiagram;
-import static_section.diagram.DependencyDiagramImpl;
-import input.reader.InputReaderImpl;
+import dynamic_section.SequenceDiagram;
 import input.cloner.SrcControlCloner;
 import input.cloner.SrcControlClonerImpl;
-import dynamic_section.SequenceDiagram;
+import input.reader.InputReaderImpl;
+import static_section.diagram.DependencyDiagram;
+import static_section.diagram.DependencyDiagramImpl;
 import util.exception.CloneException;
 import util.exception.InvalidInputException;
 
@@ -25,18 +25,18 @@ public class GRUML {
 
     }
 
-    private static void populateInputReader(String [] args){
-        try{
+    private static void populateInputReader(String[] args) {
+        try {
             inputReader.populateReader(args);
-        }catch (InvalidInputException e){
+        } catch (InvalidInputException e) {
             handleException(e);
         }
     }
 
-    private static void cloneInputSrc(String srcUri){
-        try{
+    private static void cloneInputSrc(String srcUri) {
+        try {
             srcControlCloner.clone(srcUri, CLONED_SRC_DESTINATION);
-        }catch (CloneException e){
+        } catch (CloneException e) {
             handleException(e);
         }
     }
@@ -49,7 +49,7 @@ public class GRUML {
         return null;
     }
 
-    private static void handleException(Exception e){
+    private static void handleException(Exception e) {
         System.out.println(e.getMessage());
         System.exit(0);
     }

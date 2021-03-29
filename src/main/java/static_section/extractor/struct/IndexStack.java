@@ -6,19 +6,19 @@ public class IndexStack {
 
     private final Stack<MarkedIndex> stack = new Stack();
 
-    public void push(Integer index, Boolean isBeginningOfObject){
+    public void push(Integer index, Boolean isBeginningOfObject) {
         stack.push(new MarkedIndex(index, isBeginningOfObject));
     }
 
-    public MarkedIndex pop(){
+    public MarkedIndex pop() {
         return stack.pop();
     }
 
-    public Boolean isEmpty(){
+    public Boolean isEmpty() {
         return stack.isEmpty();
     }
 
-    public class MarkedIndex{
+    public class MarkedIndex {
         public final Integer index;
         public final Boolean isBeginningOfObject;
 

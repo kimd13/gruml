@@ -6,8 +6,8 @@ import java.util.HashMap;
  * Class holds information about Dependency Diagram sections
  * Each section contains a class name followed by its methods
  * e.g. SomeClass
- *          method1()
- *          method2()
+ * method1()
+ * method2()
  */
 public class DependencyDiagramObjectSection {
 
@@ -16,7 +16,7 @@ public class DependencyDiagramObjectSection {
     private int endingIndex;
     private final HashMap<String, Integer> methodIndices = new HashMap<>();
 
-    public DependencyDiagramObjectSection(int dependencyChannelAssignment, int beginningIndex){
+    public DependencyDiagramObjectSection(int dependencyChannelAssignment, int beginningIndex) {
         this.dependencyChannelAssignment = dependencyChannelAssignment;
         this.beginningIndex = beginningIndex;
         this.endingIndex = beginningIndex;
@@ -34,12 +34,12 @@ public class DependencyDiagramObjectSection {
         return endingIndex;
     }
 
-    public int getIndexOfMethod(String methodName){
+    public int getIndexOfMethod(String methodName) {
         return methodIndices.get(methodName);
     }
 
     // TODO: Must guarantee method names are unique, currently methods are given without args (overloading issues)
-    public void inputMethod(String methodName, int index){
+    public void inputMethod(String methodName, int index) {
         methodIndices.put(methodName, index);
         endingIndex++;
     }

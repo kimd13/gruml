@@ -19,7 +19,7 @@ public class ClassInfoContainer {
     }
 
 
-    public boolean isParent(){
+    public boolean isParent() {
         return isParent;
     }
 
@@ -27,7 +27,7 @@ public class ClassInfoContainer {
         return children;
     }
 
-    public ClassInfoContainer setIsParent(boolean isParent){
+    public ClassInfoContainer setIsParent(boolean isParent) {
         this.isParent = isParent;
         return this;
     }
@@ -37,7 +37,7 @@ public class ClassInfoContainer {
         return this;
     }
 
-    public ClassInfoContainer addChild(String child){
+    public ClassInfoContainer addChild(String child) {
         children.add(child);
         return this;
     }
