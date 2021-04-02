@@ -10,7 +10,7 @@ Traditional UML diagrams become very cumbersome as codebases grow and are rarely
 ### Static Section (Left-hand Diagram)
 
 ᐅ (RED): Object on the right is inherited by another object\
-⇾ (RED): Object on the right is used by another object\
+⇾ (RED): Object on the right is used by another object
 
 | (BLACK): Dependency channel\
 ⇒ (RED): Assignment of left-adjacent dependency channel to object on the right `this`\
